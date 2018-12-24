@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Baldin.SebEJ.Gallery.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Baldin.SebEJ.Gallery.Data;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -41,6 +42,8 @@ namespace Baldin.SebEJ.Gallery.Web
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddTransient<IDataAccess, DataAccess>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
