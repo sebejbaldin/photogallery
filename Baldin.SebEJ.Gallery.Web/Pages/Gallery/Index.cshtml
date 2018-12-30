@@ -1,0 +1,66 @@
+﻿@page
+@model Baldin.SebEJ.Gallery.Web.Pages.Gallery.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div class="row">
+    <div class="col-6">
+        <form enctype="multipart/form-data" method="post">
+            <input asp-for="Photo" class="form-control-file" />
+            <button class="btn btn-primary" type="submit">Upload</button>
+        </form>
+    </div>
+</div>
+
+<div class="row" id="gallery">
+
+    @foreach (var item in Model.Pictures)
+    {
+    <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="@item.Url" alt="Card image cap">
+            <div class="card-body">
+                <!--<h5 class="card-title">title</h5>-->
+                <!--<p class="card-text">descr</p>-->
+                <div id="card_board_@item.Id">
+                    @if (!item.IsVoted)
+                    {
+                        <form>
+                            <input type="hidden" value="@item.Id" name="img_id" id="img_@item.Id">
+                            <div class="row">
+                                <div class="col">
+                                    <select name="vote" id="vote_@item.Id" class="form-control">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+
+                                <div class="col">
+                                    <button type="button" onclick="voteImage(@item.Id);" class="btn btn-primary btn-block">Vote</button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-6">
+                                <i class="fas fa-star"></i> @item.Rating
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-poll"></i> @item.Votes
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+            }
+        </div>
