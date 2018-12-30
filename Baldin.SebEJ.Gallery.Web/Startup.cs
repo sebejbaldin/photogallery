@@ -14,17 +14,20 @@ using Baldin.SebEJ.Gallery.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Baldin.SebEJ.Gallery.Data;
+using Baldin.SebEJ.Gallery.ImageStorage;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,6 +47,7 @@ namespace Baldin.SebEJ.Gallery.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IDataAccess, DataAccess>();
+            services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

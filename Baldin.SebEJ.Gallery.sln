@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baldin.SebEJ.Gallery.Web", "Baldin.SebEJ.Gallery.Web\Baldin.SebEJ.Gallery.Web.csproj", "{F3275280-475C-4948-B650-C652B6D8CFFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baldin.SebEJ.Gallery.Data", "Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj", "{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baldin.SebEJ.Gallery.Data", "Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj", "{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baldin.SebEJ.Gallery.ImageStorage", "Baldin.SebEJ.Gallery.ImageStorage\Baldin.SebEJ.Gallery.ImageStorage.csproj", "{7395D542-2D7C-483E-B37C-580CF4A5E19D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7395D542-2D7C-483E-B37C-580CF4A5E19D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7395D542-2D7C-483E-B37C-580CF4A5E19D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7395D542-2D7C-483E-B37C-580CF4A5E19D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7395D542-2D7C-483E-B37C-580CF4A5E19D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,11 +10,18 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj" />
+    <ProjectReference Include="..\Baldin.SebEJ.Gallery.ImageStorage\Baldin.SebEJ.Gallery.ImageStorage.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>
