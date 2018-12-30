@@ -12,12 +12,12 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
     {
         private readonly IAmazonS3 client;
 
-        public AWSUploaderS3(IConfiguration client)
+        public AWSUploaderS3(IConfiguration configuration)
         {
-            var key = client["Amazon:Id_Key"];
+            var key = configuration["Amazon:Id_Key"];
             Console.WriteLine(key);
             var config = new AmazonS3Config();
-            this.client = new AmazonS3Client(client["Amazon:Id_Key"], client["Amazon:Secret"]);
+            this.client = new AmazonS3Client(configuration["Amazon:Id_Key"], configuration["Amazon:Secret"], Amazon.RegionEndpoint.EUCentral1);
         }
 
         public async Task SaveAsync(string path, string name)
