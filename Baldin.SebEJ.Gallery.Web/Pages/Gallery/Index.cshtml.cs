@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Data.Models;
 using Baldin.SebEJ.Gallery.ImageStorage;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Baldin.SebEJ.Gallery.Web.Models;
 
 namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
@@ -16,51 +17,59 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
     {
         private IDataAccess dataAccess;
         private IImageManager imageManager;
+        private UserManager<IdentityUser> userManager;
 
-        public IndexModel(IDataAccess dataAccess, IImageManager imageManager)
+        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager)
         {
             this.dataAccess = dataAccess;
             this.imageManager = imageManager;
-        }
-
-        public class PicturesOfUser
-        {
-            public int Id { get; set; }
-            public string Url { get; set; }
-            public double Rating { get; set; }
-            public int Votes { get; set; }
-            public bool IsVoted { get; set; }
+            this.userManager = userManager;
         }
 
         [BindProperty]
         public IFormFile Photo { get; set; }
-        public IEnumerable<PicturesOfUser> Pictures { get; set; }
+        public IEnumerable<User_Picture> Pictures { get; set; }
 
         public void OnGet()
         {
             var Pics = dataAccess.GetPictures();
-            var userPics = dataAccess.GetVotesByUserId(User.Identity.Name);
-            if(Pics != null && userPics != null)
+            if (Pics != null && !User.Identity.IsAuthenticated)
             {
-                Pictures = Pics.Select(elem => new PicturesOfUser
+                Pictures = Pics.Select(elem => new User_Picture
                 {
                     Id = elem.Id,
                     Rating = elem.Rating,
                     Votes = elem.Votes,
                     Url = elem.Url,
-                    IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
-                });
+                    IsVoted = true
+                }).ToList();
             }
-            else if(Pics != null)
+            else
             {
-                Pictures = Pics.Select(elem => new PicturesOfUser
+                var user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                var userPics = dataAccess.GetVotesByUserId(user.Id);
+                if (Pics != null && userPics != null)
                 {
-                    Id = elem.Id,
-                    Rating = elem.Rating,
-                    Votes = elem.Votes,
-                    Url = elem.Url,
-                    IsVoted = false
-                });
+                    Pictures = Pics.Select(elem => new User_Picture
+                    {
+                        Id = elem.Id,
+                        Rating = elem.Rating,
+                        Votes = elem.Votes,
+                        Url = elem.Url,
+                        IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
+                    }).ToList();
+                }
+                else if (Pics != null)
+                {
+                    Pictures = Pics.Select(elem => new User_Picture
+                    {
+                        Id = elem.Id,
+                        Rating = elem.Rating,
+                        Votes = elem.Votes,
+                        Url = elem.Url,
+                        IsVoted = false
+                    });
+                }
             }
         }
 
