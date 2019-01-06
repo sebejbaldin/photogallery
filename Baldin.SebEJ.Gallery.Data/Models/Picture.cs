@@ -15,7 +15,7 @@ namespace Baldin.SebEJ.Gallery.Data.Models
         public double Rating {
             get {
                 if (Votes > 0)
-                    return Total_Rating / Votes;
+                    return (double) Total_Rating / Votes;
                 else
                     return 0;
             }
