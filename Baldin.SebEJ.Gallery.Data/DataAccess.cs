@@ -103,17 +103,30 @@ namespace Baldin.SebEJ.Gallery.Data
 
         public bool InsertVote(Vote vote)
         {
+            bool CVoted;
             using (var conn = new SqlConnection(ConnectionString))
             {
-                string sql = @"INSERT INTO [dbo].[Votes]
+                conn.Open();
+
+                using (var trans = conn.BeginTransaction())
+                {
+                    string insVote = @"INSERT INTO [dbo].[Votes]
                                     ([User_Id]
                                     ,[Picture_Id]
-                                    ,[Vote])
+                                    ,[Rating])
                                VALUES
                                     (@User_Id
                                     ,@Picture_Id
                                     ,@Rating)";
-                return conn.Execute(sql, vote) > 0;
+                    CVoted = conn.Execute(insVote, vote, trans) > 0;
+                    string updateImage = @"UPDATE [dbo].[Pictures]
+                                           SET [Votes] = [Votes] + 1
+                                              ,[Total_Rating] = [Total_Rating] + @Rating
+                                           WHERE Id = @Picture_Id";
+                    CVoted = CVoted && conn.Execute(updateImage, vote, trans) > 0;
+                    trans.Commit();
+                }
+                return CVoted;
             }
         }
 
