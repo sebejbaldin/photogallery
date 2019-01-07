@@ -22,9 +22,9 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         public void OnGet()
         {
-            var list = _dataAccess.GetPictures();
+            //var list = _dataAccess.GetPictures();
             var ordinated = _dataAccess.GetPictures().ToList();
-            ordinated.Sort((y, x) =>
+            ordinated.Sort((x, y) =>
             {
                 if (x.Rating == y.Rating)
                 {
@@ -40,7 +40,8 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     return (x.Rating > y.Rating) ? 1 : -1;
                 }
             });
-            Pictures = ordinated.AsEnumerable();
+            ordinated.Reverse();
+            Pictures = ordinated;
         }
     }
 }
