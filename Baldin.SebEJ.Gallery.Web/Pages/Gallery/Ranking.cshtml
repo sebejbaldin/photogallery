@@ -5,12 +5,14 @@
 }
 
 <h1>Ranking</h1>
+<a asp-page="/Gallery/Index">Gallery</a>
 
+<hr />
 <div class="row">
     @foreach (var item in Model.Pictures)
     {
-        <div class="col-md-4">
-            <div class="card" style="width: 18rem;">
+        <div class="col-md-4 col-sm-6">
+            <div class="card">
                 <img class="card-img-top" src="@item.Url" alt="Card image cap">
                 <div class="card-body">
                     <!--<h5 class="card-title">title</h5>-->
@@ -18,7 +20,7 @@
                     <div id="card_board_@item.Id">
                         <div class="row">
                             <div class="col-6">
-                                <i class="fas fa-star"></i> @item.Rating
+                                <i class="fas fa-star"></i> @item.Rating.ToString("#.#")
                             </div>
                             <div class="col-6">
                                 <i class="fas fa-poll"></i> @item.Votes

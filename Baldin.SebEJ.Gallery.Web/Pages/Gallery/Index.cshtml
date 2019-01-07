@@ -5,16 +5,15 @@
 }
 
 <h1>Gallery</h1>
+<a asp-page="/Gallery/Ranking">Rank</a>
 
 <div class="row">
     <div class="col-4">
         <form enctype="multipart/form-data" method="post">
             <input asp-for="Photo" class="form-control-file" />
-            <button class="btn btn-primary" type="submit">Upload</button>
+            <button class="btn btn-primary" type="submit">Upload</button> | 
+            <button type="button" class="btn btn-primary" onclick="getPhotos();"><i class="fas fa-sync-alt"></i></button>
         </form>
-    </div>
-    <div class="col-4">
-        <button class="btn btn-primary" onclick="getPhotos();"><i class="fas fa-sync-alt"></i></button>
     </div>
 </div>
 
@@ -22,11 +21,10 @@
 
 
 <div class="row" id="gallery">
-
     @foreach (var item in Model.Pictures)
     {
-    <div class="col-md-4">
-        <div class="card" style="width: 18rem;">
+    <div class="col-md-4 col-sm-6">
+        <div class="card">
             <img class="card-img-top" src="@item.Url" alt="Card image cap">
             <div class="card-body">
                 <!--<h5 class="card-title">title</h5>-->
@@ -56,7 +54,7 @@
                     {
                         <div class="row">
                             <div class="col-6">
-                                <i class="fas fa-star"></i> @item.Rating
+                                <i class="fas fa-star"></i> @item.Rating.ToString("#.#")
                             </div>
                             <div class="col-6">
                                 <i class="fas fa-poll"></i> @item.Votes

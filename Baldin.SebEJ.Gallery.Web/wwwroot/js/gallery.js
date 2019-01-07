@@ -1,6 +1,25 @@
 ﻿//var images;
 var gallery = document.getElementById('gallery');
 
+// Decimal round
+if (!Math.round10) {
+    Math.round10 = function (value, exp) {
+        return decimalAdjust('round', value, exp);
+    };
+}
+// Decimal floor
+if (!Math.floor10) {
+    Math.floor10 = function (value, exp) {
+        return decimalAdjust('floor', value, exp);
+    };
+}
+// Decimal ceil
+if (!Math.ceil10) {
+    Math.ceil10 = function (value, exp) {
+        return decimalAdjust('ceil', value, exp);
+    };
+}
+
 async function getPhotos() {
     fetch('/api/v1/gallery')
         .then(res => {
@@ -18,7 +37,7 @@ function writeCards(fileList) {
         let card = getCard(item.url, item.id, item.name, '', item.isVoted, item.rating, item.votes);
         //gallery.innerHTML = card;
         let child = document.createElement('div');
-        child.setAttribute('class', 'col-md-4');
+        child.setAttribute('class', 'col-md-4 col-sm-6');
         child.innerHTML = card;
         gallery.appendChild(child);
     });
@@ -58,16 +77,14 @@ async function voteImage(id) {
 }
 
 function getCard(img_url, id, title, descr, isVoted, average, votes) {
-    let tmp = `<div class="card" style="width: 18rem;">
+    let tmp = `<div class="card">
       <img class="card-img-top" src="${img_url}" alt="Card image cap">
       <div class="card-body">
             <!--<h5 class="card-title">${title}</h5>-->
             <!--<p class="card-text">${descr}</p>-->
             <div id="card_board_${id}">`;
 
-
-
-    tmp += hasVoted(isVoted, id, average, votes);
+    tmp += hasVoted(isVoted, id, Math.round10(average, -1), votes);
 
     tmp += `</div></div></div>`;
     return tmp;
@@ -104,3 +121,34 @@ function hasVoted(hasVoted, id, average, votes) {
             </div>`;
     }
 }
+
+
+/**
+   * Decimal adjustment of a number.
+   *
+   * @param {String}  type  The type of adjustment.
+   * @param {Number}  value The number.
+   * @param {Integer} exp   The exponent (the 10 logarithm of the adjustment base).
+   * @returns {Number} The adjusted value.
+   */
+// this function is not mine, please refer to 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor#Decimal_adjustment
+function decimalAdjust(type, value, exp) {
+    // If the exp is undefined or zero...
+    if (typeof exp === 'undefined' || +exp === 0) {
+        return Math[type](value);
+    }
+    value = +value;
+    exp = +exp;
+    // If the value is not a number or the exp is not an integer...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+        return NaN;
+    }
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+}
+
