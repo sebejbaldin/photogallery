@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baldin.SebEJ.Gallery.Web", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baldin.SebEJ.Gallery.Data", "Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj", "{8D39B2B3-D3CF-4CD2-B3FE-C88140DD9648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Baldin.SebEJ.Gallery.ImageStorage", "Baldin.SebEJ.Gallery.ImageStorage\Baldin.SebEJ.Gallery.ImageStorage.csproj", "{7395D542-2D7C-483E-B37C-580CF4A5E19D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baldin.SebEJ.Gallery.ImageStorage", "Baldin.SebEJ.Gallery.ImageStorage\Baldin.SebEJ.Gallery.ImageStorage.csproj", "{7395D542-2D7C-483E-B37C-580CF4A5E19D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{75582986-6B11-4208-B168-D266AB9F62C4}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
