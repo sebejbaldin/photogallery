@@ -18,5 +18,11 @@ namespace Baldin.SebEJ.Gallery.Data
         bool InsertVote(Vote vote);
         bool UpdateVote(Vote vote);
         bool DeleteVote(int Id);
+
+        IEnumerable<Comment> GetComments();
+        IEnumerable<Comment> GetCommentsByPhotoId(int photoId);
+        bool InsertComment(Comment comment);
+        bool UpdateComment(Comment comment);
+        bool DeleteComment(int Id);
     }
 }

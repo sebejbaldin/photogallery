@@ -21,6 +21,16 @@ namespace Baldin.SebEJ.Gallery.Data
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
+        public bool DeleteComment(int Id)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"DELETE FROM [dbo].[Comments] 
+                               WHERE [Id] = @Id";
+                return conn.Execute(sql, new { Id }) > 0;
+            }
+        }
+
         public bool DeletePicture(int Id)
         {
             using (var conn = new SqlConnection(ConnectionString))
@@ -38,6 +48,27 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"DELETE FROM [dbo].[Votes] 
                                WHERE [Picture_Id] = @Id";
                 return conn.Execute(sql, new { Id }) > 0;
+            }
+        }
+
+        public IEnumerable<Comment> GetComments()
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT *
+                               FROM [dbo].[Comments]";
+                return conn.Query<Comment>(sql);
+            }
+        }
+
+        public IEnumerable<Comment> GetCommentsByPhotoId(int photoId)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT *
+                               FROM [dbo].[Comments]
+                               WHERE Picture_Id = @photoId";
+                return conn.Query<Comment>(sql, new { photoId });
             }
         }
 
@@ -80,6 +111,26 @@ namespace Baldin.SebEJ.Gallery.Data
                                FROM [dbo].[Votes]
                                WHERE [User_Id] = @Id";
                 return conn.Query<Vote>(sql, new { Id = userId });
+            }
+        }
+
+        public bool InsertComment(Comment comment)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"INSERT INTO [dbo].[Comments]
+                                    ([Picture_Id]
+                                    ,[Author]
+                                    ,[Email]
+                                    ,[Text]
+                                    ,[InsertDate])
+                                VALUES
+                                    (@Picture_Id
+                                    ,@Author
+                                    ,@Email
+                                    ,@Text
+                                    ,@InsertDate";
+                return conn.Execute(sql, comment) > 0;
             }
         }
 
@@ -127,6 +178,21 @@ namespace Baldin.SebEJ.Gallery.Data
                     trans.Commit();
                 }
                 return CVoted;
+            }
+        }
+
+        public bool UpdateComment(Comment comment)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"UPDATE [dbo].[Comments]
+                                SET [Picture_Id] = @Picture_Id
+                                    ,[Author] = @Author
+                                    ,[Email] = @Email
+                                    ,[Text] = @Text
+                                    ,[InsertDate] = @InsertDate
+                                WHERE Id = @Id";
+                return conn.Execute(sql, comment) > 0;
             }
         }
 
