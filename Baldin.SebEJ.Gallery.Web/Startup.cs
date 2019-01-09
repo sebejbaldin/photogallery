@@ -47,8 +47,9 @@ namespace Baldin.SebEJ.Gallery.Web
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IDataAccess, DataAccess>();
+            services.AddTransient<IDataAccess, SQLServerData>();
             services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
+            //services.AddTransient<IImageManager, AWSUploaderS3>();
 
             services.AddSignalR();
 

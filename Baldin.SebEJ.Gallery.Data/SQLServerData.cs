@@ -7,16 +7,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace Baldin.SebEJ.Gallery.Data
 {
-    public class DataAccess : IDataAccess
+    public class SQLServerData : IDataAccess
     {
         private string ConnectionString;
 
-        public DataAccess(string connectionString)
+        public SQLServerData(string connectionString)
         {
             ConnectionString = connectionString;
         }
 
-        public DataAccess(IConfiguration configuration)
+        public SQLServerData(IConfiguration configuration)
         {
             ConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
@@ -25,7 +25,7 @@ namespace Baldin.SebEJ.Gallery.Data
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
-                string sql = @"DELETE FROM [dbo].[Comments] 
+                string sql = @"DELETE FROM [dbo].[Comments]
                                WHERE [Id] = @Id";
                 return conn.Execute(sql, new { Id }) > 0;
             }
