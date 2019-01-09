@@ -17,7 +17,7 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
             var key = configuration["Amazon:Id_Key"];
             Console.WriteLine(key);
             var config = new AmazonS3Config();
-            this.client = new AmazonS3Client(configuration["Amazon:Id_Key"], configuration["Amazon:Secret"], Amazon.RegionEndpoint.EUCentral1);
+            client = new AmazonS3Client(configuration["Amazon:Id_Key"], configuration["Amazon:Secret"], Amazon.RegionEndpoint.EUWest1);
         }
 
         public async Task SaveAsync(string path, string name)
@@ -40,7 +40,15 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                await transfer.UploadAsync(image, "tsac2018-baldin-photo", name);
+                var qwetrt121223 = new TransferUtilityUploadRequest()
+                {
+                    InputStream = image,
+                    CannedACL = S3CannedACL.PublicRead,
+                    BucketName = "tsac2018-baldin-photo",
+                    Key = name
+                };
+
+                await transfer.UploadAsync(qwetrt121223);
             }
         }
     }
