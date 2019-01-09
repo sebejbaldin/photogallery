@@ -10,6 +10,10 @@ connection.on('ReceiveComment', (username, text, insertDate) => {
     appendComment(username, text, insertDate);
 });
 
+connection.on('EraseComment', (comment_id) => {
+    document.getElementById('comment_' + comment_id).remove();
+});
+
 document.getElementById('sendComment').addEventListener('click', () => {
     connection.invoke('SendComment', username, commentText.value, new Date(), postId);
     let payload = {
@@ -48,7 +52,6 @@ function appendComment(username, text, creationDate) {
     comments.appendChild(container);
 }
 
-
 function getComment(username, text, creationDate) {
     return `<div class="row">
                 <div class="col-2">
@@ -59,10 +62,19 @@ function getComment(username, text, creationDate) {
                         <div class="card-body">
                             <h5 class="card-title">${username}, ${creationDate}</h5>
                             <p class="card-text">${text}</p>
-                            <button class="btn btn-link">Modify</button>
-                            <button class="btn btn-link">Delete</button>
                         </div>
                     </div>
                 </div>
             </div>`;
+}
+
+function deleteComment(comment_id) {
+    connection.invoke('DeleteComment', comment_id, postId);
+    fetch(`/api/v1/comments/${comment_id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        mode: 'cors'
+    }).catch(err => {
+        console.error(err);
+    });
 }

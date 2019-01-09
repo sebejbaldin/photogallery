@@ -34,5 +34,17 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             _dataAccess.InsertComment(comment);
             return Ok();
         }
+
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> DeleteComment(int commentId)
+        {
+            var comment = _dataAccess.GetComment(commentId);
+            if (comment.Email != User.Identity.Name)
+                return Forbid();
+            //var user = await _userManager.FindByEmailAsync(comment.Email);
+
+            _dataAccess.DeleteComment(commentId);
+            return Ok();
+        }
     }
 }
