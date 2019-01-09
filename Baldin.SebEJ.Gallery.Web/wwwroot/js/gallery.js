@@ -77,8 +77,8 @@ async function voteImage(id) {
 }
 
 function getCard(img_url, id, title, descr, isVoted, average, votes) {
-    let tmp = `<div class="card">
-      <img class="card-img-top" src="${img_url}" alt="Card image cap">
+    let tmp = `<div class="card" style="margin-bottom: 25px;">
+      <img class="card-img-top" style="height: 300px;" src="${img_url}" alt="Card image cap">
       <div class="card-body">
             <!--<h5 class="card-title">${title}</h5>-->
             <!--<p class="card-text">${descr}</p>-->

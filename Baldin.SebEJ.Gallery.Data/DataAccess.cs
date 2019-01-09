@@ -51,6 +51,17 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public Comment GetComment(int Id)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT *
+                               FROM [dbo].[Comments]
+                               WHERE Id = @Id";
+                return conn.QuerySingleOrDefault<Comment>(sql, new { Id });
+            }
+        }
+
         public IEnumerable<Comment> GetComments()
         {
             using (var conn = new SqlConnection(ConnectionString))
@@ -129,7 +140,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Author
                                     ,@Email
                                     ,@Text
-                                    ,@InsertDate";
+                                    ,@InsertDate)";
                 return conn.Execute(sql, comment) > 0;
             }
         }
@@ -186,11 +197,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new SqlConnection(ConnectionString))
             {
                 string sql = @"UPDATE [dbo].[Comments]
-                                SET [Picture_Id] = @Picture_Id
-                                    ,[Author] = @Author
-                                    ,[Email] = @Email
-                                    ,[Text] = @Text
-                                    ,[InsertDate] = @InsertDate
+                                SET [Text] = @Text
                                 WHERE Id = @Id";
                 return conn.Execute(sql, comment) > 0;
             }

@@ -1,0 +1,84 @@
+﻿@page "{photoId}"
+@model Baldin.SebEJ.Gallery.Web.Pages.Gallery.PhotoModel
+@{
+    ViewData["Title"] = "Photo";
+}
+
+<h1>Photo</h1>
+
+<div class="row">
+    <div class="col-md-9">
+        <img class="img-fluid" style="max-height: 500px;" src="@Model.Picture.Url" alt="Uploaded Image" />
+    </div>
+    <div class="col-md-3">
+        <h4>Info</h4>
+        <input type="hidden" value="@Model.Picture.Id" id="postId" />
+        @*<p>Name: @Model.Picture.Name</p>*@
+        <p>Votes: @Model.Picture.Votes</p>
+        <p>Rating: @Model.Picture.Rating.ToString("#.#")</p>
+    </div>
+</div>
+
+<br />
+<br />
+<h3>Comments</h3>
+
+<div class="row">
+    <div class="col">
+        <form>
+            <div class="form-group">
+                <label for="commentText">Comment this photo</label>
+                <textarea class="form-control" id="commentText" aria-describedby="insert your comment" placeholder="Enter text.."></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" id="sendComment"><i class="fas fa-paper-plane"></i> Send</button>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<div class="row" id="comments_box">
+    @*@if (Model.Comments == null || Model.Comments.Count() <= 0)
+        {
+            <div class="col">
+                <p style="text-align:center;">Commenta per primo!</p>
+            </div>
+        }
+        else*@
+    @if (Model.Comments != null && Model.Comments.Count() > 0)
+    {
+        @foreach (var item in Model.Comments)
+        {
+            <div class="col-12" id="comment_@item.Id">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="fas fa-users fa-3x"></i>
+                    </div>
+                    <div class="col-10">
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Email, @item.InsertDate</h5>
+                                <p class="card-text" id="com_@item.Id">@item.Text</p>
+                                @if (User.Identity.Name == item.Email)
+                                {
+                                    <button class="btn btn-link mod" onclick="updateComment(@item.Id);">Modify</button>
+                                    <button class="btn btn-link del" onclick="deleteComment(@item.Id);">Delete</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+@section Scripts {
+    <script>
+        var username = "@User.Identity.Name";
+        var postId = "@Model.Picture.Id";
+    </script>
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/photo_detail.js"></script>
+}
