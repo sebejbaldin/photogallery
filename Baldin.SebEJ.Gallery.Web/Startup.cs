@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.ImageStorage;
+using Baldin.SebEJ.Gallery.Web.Hubs;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -49,6 +50,7 @@ namespace Baldin.SebEJ.Gallery.Web
             services.AddTransient<IDataAccess, DataAccess>();
             services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
 
+            services.AddSignalR();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -73,6 +75,11 @@ namespace Baldin.SebEJ.Gallery.Web
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<GalleryHub>("/Comments");
+            });
 
             app.UseMvc();
         }
