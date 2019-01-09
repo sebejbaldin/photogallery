@@ -24,7 +24,14 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                await transfer.UploadAsync(path, "tsac2018-baldin-photo", name);
+                var qwetrt121223 = new TransferUtilityUploadRequest()
+                {
+                    FilePath = path,
+                    CannedACL = S3CannedACL.PublicRead,
+                    BucketName = "tsac2018-baldin-photo",
+                    Key = name
+                };
+                await transfer.UploadAsync(qwetrt121223);
             }
         }
 
@@ -32,7 +39,14 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                await transfer.UploadAsync(image, "tsac2018-baldin-photo", Guid.NewGuid().ToString());
+                var qwetrt121223 = new TransferUtilityUploadRequest()
+                {
+                    InputStream = image,
+                    CannedACL = S3CannedACL.PublicRead,
+                    BucketName = "tsac2018-baldin-photo",
+                    Key = Guid.NewGuid().ToString()
+                };
+                await transfer.UploadAsync(qwetrt121223);
             }
         }
 
