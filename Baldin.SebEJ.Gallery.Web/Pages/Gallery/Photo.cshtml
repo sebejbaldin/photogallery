@@ -61,8 +61,8 @@
                                 <p class="card-text" id="com_@item.Id">@item.Text</p>
                                 @if (User.Identity.Name == item.Email)
                                 {
-                                    <button class="btn btn-link mod" onclick="updateComment(@item.Id);">Modify</button>
-                                    <button class="btn btn-link del" onclick="deleteComment(@item.Id);">Delete</button>
+                                    <button class="btn btn-link mod" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
+                                    <button class="btn btn-link del" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>
                                 }
                             </div>
                         </div>
