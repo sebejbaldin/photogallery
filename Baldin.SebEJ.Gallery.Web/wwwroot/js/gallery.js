@@ -66,7 +66,7 @@ async function voteImage(id) {
     })
         .then(obj => {
             if (obj && obj.average && obj.count)
-                card.innerHTML = hasVoted(true, id, obj.average, obj.count);
+                card.innerHTML = hasVoted(true, id, Math.round10(obj.average, -1), obj.count);
             else
                 getPhotos();
         })
