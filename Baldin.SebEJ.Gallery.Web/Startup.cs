@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.ImageStorage;
 using Baldin.SebEJ.Gallery.Web.Hubs;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -40,16 +41,24 @@ namespace Baldin.SebEJ.Gallery.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            //options.UseSqlServer(
+            //    Configuration.GetConnectionString("SQLServerConn")));
+            options.UseNpgsql(
+                Configuration.GetConnectionString("PgSQLConnOnline")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IDataAccess, SQLServerData>();
-            services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
-            //services.AddTransient<IImageManager, AWSUploaderS3>();
+            services.AddTransient<IDataAccess, PgSQLData>();
+            //services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
+            services.AddTransient<IImageManager, AWSUploaderS3>();
 
             services.AddSignalR();
 
@@ -59,6 +68,7 @@ namespace Baldin.SebEJ.Gallery.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
