@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             _userManager = userManager;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> InsertComment(Comment comment)
         {
@@ -35,6 +37,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteComment(int commentId)
         {

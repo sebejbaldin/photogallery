@@ -23,17 +23,27 @@
 <br />
 <h3>Comments</h3>
 
-<div class="row">
-    <div class="col">
-        <form>
-            <div class="form-group">
-                <label for="commentText">Comment this photo</label>
-                <textarea class="form-control" id="commentText" aria-describedby="insert your comment" placeholder="Enter text.."></textarea>
-            </div>
-            <button type="button" class="btn btn-primary" id="sendComment"><i class="fas fa-paper-plane"></i> Send</button>
-        </form>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col">
+            <form>
+                <div class="form-group">
+                    <label for="commentText">Comment this photo</label>
+                    <textarea class="form-control" id="commentText" aria-describedby="insert your comment" placeholder="Enter text.." maxlength="500"></textarea>
+                    <p style="text-align: right"><span id="charCount">0</span>/500</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="sendComment"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        To be able to comment you must log-in to the application.
+    </div>
+}
 
 <hr />
 
@@ -49,20 +59,20 @@
     {
         @foreach (var item in Model.Comments)
         {
-            <div class="col-12" id="comment_@item.Id">
+            <div class="col-12" id="comment_@item.Id" style="border-bottom: 10px;">
                 <div class="row">
-                    <div class="col-2">
-                        <i class="fas fa-users fa-3x"></i>
+                    <div class="col-1">
+                        <i class="fas fa-user fa-2x"></i>
                     </div>
-                    <div class="col-10">
+                    <div class="col-11">
                         <div class="card" style="width: 100%;">
                             <div class="card-body">
-                                <h5 class="card-title">@item.Email, @item.InsertDate</h5>
-                                <p class="card-text" id="com_@item.Id">@item.Text</p>
+                                <h5 class="card-title">@item.Email, @item.InsertDate.ToLocalTime()</h5>
+                                <p class="card-text" style="max-height: 40px; overflow-x: auto;" id="com_@item.Id">@item.Text</p>
                                 @if (User.Identity.Name == item.Email)
                                 {
-                                    <button class="btn btn-link mod" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
-                                    <button class="btn btn-link del" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>
+                                    <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
+                                    <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>
                                 }
                             </div>
                         </div>
