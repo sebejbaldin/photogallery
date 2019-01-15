@@ -41,6 +41,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     Rating = elem.Rating,
                     Votes = elem.Votes,
                     Url = elem.Url,
+                    Author = elem.User_Id,
                     IsVoted = true
                 }).ToList();
             }
@@ -56,6 +57,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Rating = elem.Rating,
                         Votes = elem.Votes,
                         Url = elem.Url,
+                        Author = elem.User_Id,
                         IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
                     }).ToList();
                 }
@@ -67,6 +69,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Rating = elem.Rating,
                         Votes = elem.Votes,
                         Url = elem.Url,
+                        Author = elem.User_Id,
                         IsVoted = false
                     });
                 }
@@ -79,16 +82,17 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             {
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
                 var name = Guid.NewGuid().ToString() + fileExtension;
+                var user = await userManager.GetUserAsync(User);
                 await imageManager.SaveAsync(Photo.OpenReadStream(), name);
                 var pic = new Picture
                 {
-                    Url = $@"/uploads/{name}",
-                    Name = name
+                    Url = @"/uploads/" + name,
+                    Name = name,
+                    User_Id = user.Id
                 };
                 dataAccess.InsertPicture(pic);
-                return RedirectToPage("/Gallery/Index");
             }
-            return Page();
+            return RedirectToPage("/Gallery/Index");
         }
     }
 }

@@ -105,6 +105,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,user_id AS User_Id
                                ,name AS Name
                                ,url AS Url
                                ,votes AS Votes
@@ -120,6 +121,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,user_id AS User_Id
                                ,name AS Name
                                ,url AS Url
                                ,votes AS Votes
@@ -180,11 +182,13 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"INSERT INTO sebej_pictures
                                     (name
+                                    ,user_id
                                     ,url
                                     ,votes
                                     ,total_rating)
                                VALUES
                                     (@Name
+                                    ,@User_Id
                                     ,@Url
                                     ,@Votes
                                     ,@Total_Rating)";

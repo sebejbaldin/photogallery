@@ -8,6 +8,7 @@ namespace Baldin.SebEJ.Gallery.Data.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string User_Id { get; set; }
         public string Url { get; set; }
         public int Votes { get; set; }
         public long Total_Rating { get; set; }
