@@ -78,6 +78,8 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         public async Task<IActionResult> OnPost()
         {
+            if (!User.Identity.IsAuthenticated)
+                return Unauthorized();
             if (Photo != null && Photo.Length > 0)
             {
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));

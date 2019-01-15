@@ -11,17 +11,26 @@
 
 <div class="row">
     <div class="col-10">
-        <form enctype="multipart/form-data" method="post">
-            <div class="input-group mb-3">
-                <div class="custom-file">
-                    <input asp-for="Photo" class="custom-file-input" id="image-upload" />
-                    <label class="custom-file-label" for="image-upload" aria-describedby="image form upload">Choose file</label>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form enctype="multipart/form-data" method="post">
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input asp-for="Photo" class="custom-file-input" id="image-upload" />
+                        <label class="custom-file-label" for="image-upload" aria-describedby="image form upload">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <button type="submit" class="input-group-text" id="upload button">Upload</button>
+                    </div>
                 </div>
-                <div class="input-group-append">
-                    <button type="submit" class="input-group-text" id="upload button">Upload</button>
-                </div>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-info" role="alert">
+                To upload images you must Log-In or Register!
             </div>
-        </form>
+        }
     </div>
     <div class="col-2">
         <button type="button" class="btn btn-primary" onclick="getPhotos();"><i class="fas fa-sync-alt"></i></button>
