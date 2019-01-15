@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Baldin.SebEJ.Gallery.Web.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
@@ -17,13 +18,15 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
     {
         private IDataAccess dataAccess;
         private IImageManager imageManager;
+        private IConfiguration configuration;
         private UserManager<IdentityUser> userManager;
 
-        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager)
+        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
             this.dataAccess = dataAccess;
             this.imageManager = imageManager;
             this.userManager = userManager;
+            this.configuration = configuration;
         }
 
         [BindProperty]
@@ -88,7 +91,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 await imageManager.SaveAsync(Photo.OpenReadStream(), name);
                 var pic = new Picture
                 {
-                    Url = @"/uploads/" + name,
+                    Url = configuration["CDN:Amazon"] + name,
                     Name = name,
                     User_Id = user.Id
                 };
