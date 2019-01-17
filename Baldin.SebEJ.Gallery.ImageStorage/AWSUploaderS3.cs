@@ -14,9 +14,6 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
 
         public AWSUploaderS3(IConfiguration configuration)
         {
-            var key = configuration["Amazon:Id_Key"];
-            Console.WriteLine(key);
-            var config = new AmazonS3Config();
             client = new AmazonS3Client(configuration["Amazon:Id_Key"], configuration["Amazon:Secret"], Amazon.RegionEndpoint.EUWest1);
         }
 
@@ -24,14 +21,14 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                var qwetrt121223 = new TransferUtilityUploadRequest()
+                var originalName = new TransferUtilityUploadRequest()
                 {
                     FilePath = path,
                     CannedACL = S3CannedACL.PublicRead,
                     BucketName = "tsac2018-baldin-photo",
                     Key = name
                 };
-                await transfer.UploadAsync(qwetrt121223);
+                await transfer.UploadAsync(originalName);
             }
         }
 
@@ -39,14 +36,14 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                var qwetrt121223 = new TransferUtilityUploadRequest()
+                var originalName = new TransferUtilityUploadRequest()
                 {
                     InputStream = image,
                     CannedACL = S3CannedACL.PublicRead,
                     BucketName = "tsac2018-baldin-photo",
                     Key = Guid.NewGuid().ToString()
                 };
-                await transfer.UploadAsync(qwetrt121223);
+                await transfer.UploadAsync(originalName);
             }
         }
 
@@ -54,7 +51,7 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             using (var transfer = new TransferUtility(client))
             {
-                var qwetrt121223 = new TransferUtilityUploadRequest()
+                var originalName = new TransferUtilityUploadRequest()
                 {
                     InputStream = image,
                     CannedACL = S3CannedACL.PublicRead,
@@ -62,7 +59,7 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
                     Key = name
                 };
 
-                await transfer.UploadAsync(qwetrt121223);
+                await transfer.UploadAsync(originalName);
             }
         }
     }
