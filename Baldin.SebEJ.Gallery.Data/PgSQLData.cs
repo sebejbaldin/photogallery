@@ -107,6 +107,7 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT id AS Id
                                ,user_id AS User_Id
                                ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
                                ,url AS Url
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
@@ -123,6 +124,7 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT id AS Id
                                ,user_id AS User_Id
                                ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
                                ,url AS Url
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
@@ -184,12 +186,14 @@ namespace Baldin.SebEJ.Gallery.Data
                                     (name
                                     ,user_id
                                     ,url
+                                    ,thumbnail_url
                                     ,votes
                                     ,total_rating)
                                VALUES
                                     (@Name
                                     ,@User_Id
                                     ,@Url
+                                    ,@Thumbnail_Url
                                     ,@Votes
                                     ,@Total_Rating)";
                 return conn.Execute(sql, picture) > 0;

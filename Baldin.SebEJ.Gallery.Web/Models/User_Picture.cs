@@ -9,6 +9,7 @@ namespace Baldin.SebEJ.Gallery.Web.Models
     {
         public int Id { get; set; }
         public string Url { get; set; }
+        public string Thumbnail_Url { get; set; }
         public double Rating { get; set; }
         public int Votes { get; set; }
         public bool IsVoted { get; set; }

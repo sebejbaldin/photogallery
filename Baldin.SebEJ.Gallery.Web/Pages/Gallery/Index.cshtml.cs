@@ -44,6 +44,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     Rating = elem.Rating,
                     Votes = elem.Votes,
                     Url = elem.Url,
+                    Thumbnail_Url = elem.Thumbnail_Url,
                     Author = elem.User_Id,
                     IsVoted = true
                 }).ToList();
@@ -60,6 +61,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Rating = elem.Rating,
                         Votes = elem.Votes,
                         Url = elem.Url,
+                        Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
                         IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
                     }).ToList();
@@ -72,6 +74,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Rating = elem.Rating,
                         Votes = elem.Votes,
                         Url = elem.Url,
+                        Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
                         IsVoted = false
                     });
@@ -91,7 +94,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 await imageManager.SaveAsync(Photo.OpenReadStream(), name);
                 var pic = new Picture
                 {
-                    Url = configuration["CDN:Amazon"] + name,
+                    Url = configuration["CDN:Amazon"] + "images/" + name,
                     Name = name,
                     User_Id = user.Id
                 };

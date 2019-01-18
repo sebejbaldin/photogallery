@@ -12,6 +12,7 @@ namespace Baldin.SebEJ.Gallery.Data.Models
         public string Url { get; set; }
         public int Votes { get; set; }
         public long Total_Rating { get; set; }
+        public string Thumbnail_Url { get; set; }
 
         public double Rating {
             get {
