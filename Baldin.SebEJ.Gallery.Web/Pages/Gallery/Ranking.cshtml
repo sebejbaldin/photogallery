@@ -13,7 +13,14 @@
     {
         <div class="col-md-4 col-sm-6">
             <div class="card" style="margin-bottom: 25px;">
-                <img class="card-img-top" style="height: 300px;" src="@item.Url" alt="Card image cap">
+                @if (!string.IsNullOrEmpty(item.Thumbnail_Url))
+                {
+                    <img class="card-img-top" style="height: 300px;" src="@item.Thumbnail_Url" alt="Card image cap">
+                }
+                else
+                {
+                    <img class="card-img-top" style="height: 300px;" src="@item.Url" alt="Card image cap">
+                }
                 <div class="card-body">
                     <!--<h5 class="card-title">title</h5>-->
                     <!--<p class="card-text">descr</p>-->

@@ -45,7 +45,7 @@
     <div class="col-md-4 col-sm-6">
         <div class="card" style="margin-bottom: 25px;">
             <a asp-page="/Gallery/Photo" asp-route-photoId="@item.Id">
-                @if (item.Thumbnail_Url != null)
+                @if (!string.IsNullOrEmpty(item.Thumbnail_Url))
                 {
                     <img class="card-img-top" style="height: 300px;" src="@item.Thumbnail_Url" alt="Card image cap">
                 }

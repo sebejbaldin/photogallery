@@ -91,7 +91,6 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
                 var name = Guid.NewGuid().ToString() + fileExtension;
                 var user = await userManager.GetUserAsync(User);
-                await imageManager.SaveAsync(Photo.OpenReadStream(), name);
                 var pic = new Picture
                 {
                     Url = configuration["CDN:Amazon"] + "images/" + name,
@@ -99,6 +98,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     User_Id = user.Id
                 };
                 dataAccess.InsertPicture(pic);
+                await imageManager.SaveAsync(Photo.OpenReadStream(), name);
             }
             return RedirectToPage("/Gallery/Index");
         }
