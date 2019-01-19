@@ -11,10 +11,15 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
     public class AWSUploaderS3 : IImageManager
     {
         private readonly IAmazonS3 client;
+        private readonly string bucketName;
+        private readonly string folderName;
 
         public AWSUploaderS3(IConfiguration configuration)
         {
-            client = new AmazonS3Client(configuration["Amazon:Id_Key"], configuration["Amazon:Secret"], Amazon.RegionEndpoint.EUWest1);
+            var amazon = configuration.GetSection("CloudStorage:Amazon");
+            client = new AmazonS3Client(amazon["Account"], amazon["Secret"], Amazon.RegionEndpoint.EUWest1);
+            bucketName = amazon["Bucket"];
+            folderName = amazon["Folder"];
         }
 
         public async Task SaveAsync(string path, string name)
@@ -25,8 +30,8 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
                 {
                     FilePath = path,
                     CannedACL = S3CannedACL.PublicRead,
-                    BucketName = "tsac2018-baldin-photo",
-                    Key = name
+                    BucketName = bucketName,
+                    Key = folderName + "/" + name
                 };
                 await transfer.UploadAsync(originalName);
             }
@@ -40,8 +45,8 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
                 {
                     InputStream = image,
                     CannedACL = S3CannedACL.PublicRead,
-                    BucketName = "tsac2018-baldin-photo",
-                    Key = Guid.NewGuid().ToString()
+                    BucketName = bucketName,
+                    Key = folderName + "/" + Guid.NewGuid().ToString()
                 };
                 await transfer.UploadAsync(originalName);
             }
@@ -55,8 +60,8 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
                 {
                     InputStream = image,
                     CannedACL = S3CannedACL.PublicRead,
-                    BucketName = "tsac2018-baldin-photo",
-                    Key = name
+                    BucketName = bucketName,
+                    Key = folderName + "/" + name
                 };
 
                 await transfer.UploadAsync(originalName);

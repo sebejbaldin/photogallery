@@ -58,7 +58,19 @@ namespace Baldin.SebEJ.Gallery.Web
 
             services.AddTransient<IDataAccess, PgSQLData>();
             //services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
-            services.AddTransient<IImageManager, AWSUploaderS3>();
+            
+            switch (Configuration["Storage"])
+            {
+                case "Amazon":
+                    services.AddTransient<IImageManager, AWSUploaderS3>();
+                    break;
+                case "Azure":
+                    services.AddTransient<IImageManager, AzureStorageUploader>();
+                    break;
+                default:
+                    throw new Exception("Storage setting not provided.");
+                    break;
+            }
 
             services.AddSignalR();
 

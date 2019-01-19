@@ -91,9 +91,10 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
                 var name = Guid.NewGuid().ToString() + fileExtension;
                 var user = await userManager.GetUserAsync(User);
+                var storageUrlConf = "CloudStorage:" + configuration["Storage"] + ":Storage";
                 var pic = new Picture
                 {
-                    Url = configuration["CDN:Amazon"] + "images/" + name,
+                    Url = configuration[storageUrlConf] + "images/" + name,
                     Name = name,
                     User_Id = user.Id
                 };
