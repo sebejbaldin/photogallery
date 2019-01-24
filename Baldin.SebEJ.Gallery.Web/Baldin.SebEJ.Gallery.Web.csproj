@@ -17,6 +17,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Baldin.SebEJ.Gallery.Caching\Baldin.SebEJ.Gallery.Caching.csproj" />
     <ProjectReference Include="..\Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj" />
     <ProjectReference Include="..\Baldin.SebEJ.Gallery.ImageStorage\Baldin.SebEJ.Gallery.ImageStorage.csproj" />
   </ItemGroup>
