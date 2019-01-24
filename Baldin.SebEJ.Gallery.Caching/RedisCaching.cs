@@ -64,12 +64,40 @@ namespace Baldin.SebEJ.Gallery.Caching
 
         public async Task<Picture> GetPhotoAsync(int Id)
         {
-            throw new NotImplementedException();
+            var photoData = await _client.HashGetAllAsync($"pic_{Id}");
+            if (photoData != null && photoData.Length > 0)
+            {
+                var picture = new Picture()
+                {
+                    Id = Id,
+                    Name = "",
+                    User_Id = photoData.First(x => x.Name == "user_id").Value,
+                    Url = photoData.First(x => x.Name == "url").Value,
+                    Thumbnail_Url = photoData.First(x => x.Name == "thumbnail_url").Value
+                };
+                if (int.TryParse(photoData.First(x => x.Name == "votes").Value, out int votes))
+                {
+                    picture.Votes = votes;
+                }
+                if (long.TryParse(photoData.First(x => x.Name == "total_rating").Value, out long total_rating))
+                {
+                    picture.Total_Rating = total_rating;
+                }
+                return picture;
+            }
+            return null;
         }
 
         public async Task<bool> InsertPhotoAsync(Picture picture)
         {
-            throw new NotImplementedException();
+            HashEntry[] imgData = new HashEntry[5];
+            imgData[0] = new HashEntry("url", picture.Url);
+            imgData[1] = new HashEntry("thumbnail_url", picture.Thumbnail_Url);
+            imgData[2] = new HashEntry("user_id", picture.User_Id);
+            imgData[3] = new HashEntry("votes", picture.Votes);
+            imgData[4] = new HashEntry("total_rating", picture.Total_Rating);
+            await _client.HashSetAsync($"pic_{picture.Id}", imgData);
+            return await _client.SetAddAsync("photos", picture.Id);
         }
 
         public async Task<bool> InsertPhotosAsync(IEnumerable<Picture> pictures)
@@ -130,9 +158,13 @@ namespace Baldin.SebEJ.Gallery.Caching
             throw new NotImplementedException();
         }
 
-        public Task<bool> InsertVoteAsync(Vote vote)
+        public async Task<bool> InsertVoteAsync(Vote vote)
         {
-            throw new NotImplementedException();
+            if (vote != null)
+            {
+                return await _client.SetAddAsync(vote.User_Id, vote.Picture_Id);
+            }
+            return false;
         }
 
         public async Task<bool> InsertVotesAsync(IEnumerable<Vote> votes)
