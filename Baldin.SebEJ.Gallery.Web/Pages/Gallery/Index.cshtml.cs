@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Baldin.SebEJ.Gallery.Web.Models;
 using Microsoft.Extensions.Configuration;
+using Baldin.SebEJ.Gallery.Caching;
 
 namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
@@ -19,23 +20,32 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         private IDataAccess dataAccess;
         private IImageManager imageManager;
         private IConfiguration configuration;
+        private ICaching caching;
         private UserManager<IdentityUser> userManager;
 
-        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager, IConfiguration configuration, ICaching caching)
         {
             this.dataAccess = dataAccess;
             this.imageManager = imageManager;
             this.userManager = userManager;
             this.configuration = configuration;
+            this.caching = caching;
         }
 
         [BindProperty]
         public IFormFile Photo { get; set; }
         public IEnumerable<User_Picture> Pictures { get; set; }
 
-        public void OnGet()
+        public async Task OnGet()
         {
-            var Pics = dataAccess.GetPictures();
+            IEnumerable<Picture> Pics = await caching.GetPhotosAsync();
+            if (Pics == null)
+            {
+                Pics = dataAccess.GetPictures();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                caching.InsertPhotosAsync(Pics);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            }
             if (Pics != null && !User.Identity.IsAuthenticated)
             {
                 Pictures = Pics.Select(elem => new User_Picture
@@ -51,7 +61,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             }
             else
             {
-                var user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
                 var userPics = dataAccess.GetVotesByUserId(user.Id);
                 if (Pics != null && userPics != null)
                 {

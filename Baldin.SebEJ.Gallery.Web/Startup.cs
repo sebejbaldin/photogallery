@@ -17,6 +17,7 @@ using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.ImageStorage;
 using Baldin.SebEJ.Gallery.Web.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
+using Baldin.SebEJ.Gallery.Caching;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -58,7 +59,7 @@ namespace Baldin.SebEJ.Gallery.Web
 
             services.AddTransient<IDataAccess, PgSQLData>();
             //services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
-            
+            services.AddSingleton<ICaching, RedisCaching>();
             switch (Configuration["Storage"])
             {
                 case "Amazon":
