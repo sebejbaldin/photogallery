@@ -38,13 +38,13 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         public async Task OnGet()
         {
-            IEnumerable<Picture> Pics = await caching.GetPhotosAsync();
+            var Pics = await caching.GetPhotosAsync();
             if (Pics == null)
             {
                 Pics = dataAccess.GetPictures();
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 caching.InsertPhotosAsync(Pics);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             if (Pics != null && !User.Identity.IsAuthenticated)
             {
@@ -62,7 +62,14 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             else
             {
                 var user = await userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = dataAccess.GetVotesByUserId(user.Id);
+                var userPics = await caching.GetVotesByUserId(user.Id);
+                if (userPics == null || userPics.Count() == 0)
+                {
+                    userPics = dataAccess.GetVotesByUserId(user.Id);
+                    #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    caching.InsertVotesAsync(userPics);
+                    #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                }
                 if (Pics != null && userPics != null)
                 {
                     Pictures = Pics.Select(elem => new User_Picture
