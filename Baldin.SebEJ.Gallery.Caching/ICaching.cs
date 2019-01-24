@@ -12,10 +12,11 @@ namespace Baldin.SebEJ.Gallery.Caching
         Task<Picture> GetPhotoAsync(int Id);
         Task<bool> InsertPhotoAsync(Picture picture);
         Task<bool> InsertPhotosAsync(IEnumerable<Picture> pictures);
-        //Task<IEnumerable<Vote>> GetVotesAsync();
-        //Task<Vote> GetVoteAsync(int Id);
-        //Task<bool> InsertVoteAsync(Vote vote);
-        //Task<bool> InsertVotesAsync(IEnumerable<Vote> votes);
+        Task<IEnumerable<Vote>> GetVotesAsync();
+        Task<IEnumerable<Vote>> GetVotesByUserId(string userId);
+        Task<Vote> GetVoteAsync(int Id);
+        Task<bool> InsertVoteAsync(Vote vote);
+        Task<bool> InsertVotesAsync(IEnumerable<Vote> votes);
         //Task<IEnumerable<Comment>> GetCommentsAsync();
         //Task<Comment> GetCommentAsync();
         //Task<bool> InsertCommentAsync(Comment comment);

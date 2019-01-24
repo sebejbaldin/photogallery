@@ -100,5 +100,59 @@ namespace Baldin.SebEJ.Gallery.Caching
                 return false;
             }
         }
+
+        public Task<IEnumerable<Vote>> GetVotesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Vote>> GetVotesByUserId(string userId)
+        {
+            if (userId != null)
+            {
+                var votes = await _client.SetMembersAsync(userId);
+                List<Vote> userVotes = new List<Vote>(votes.Count());
+                foreach (var vote in votes)
+                {
+                    userVotes.Add(new Vote()
+                    {
+                        User_Id = userId,
+                        Picture_Id = (int)vote
+                    });
+                }
+                return userVotes;
+            }
+            return null;
+        }
+
+        public Task<Vote> GetVoteAsync(int Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> InsertVoteAsync(Vote vote)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> InsertVotesAsync(IEnumerable<Vote> votes)
+        {
+            if (votes != null)
+            {
+                RedisValue[] picturesId;
+                var userGrouped = votes.GroupBy(x => x.User_Id);
+                foreach (var userVotes in userGrouped)
+                {
+                    picturesId = new RedisValue[userVotes.Count()];
+                    for (int i = 0; i < userVotes.Count(); i++)
+                    {
+                        picturesId[i] = userVotes.ElementAt(i).Picture_Id;
+                    }
+                    await _client.SetAddAsync(userVotes.Key, picturesId);
+                }
+                return true;
+            }
+            return false;
+        }
     }
 }
