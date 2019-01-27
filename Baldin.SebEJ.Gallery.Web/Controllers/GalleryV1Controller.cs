@@ -36,7 +36,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 return ValidationProblem();
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             vote.User_Id = user.Id;
-            var result = _dataAccess.InsertVote(vote);
+            var result = await _dataAccess.InsertVoteAsync(vote);
             if (result)
             {
                 _caching.InsertVoteAsync(vote);
@@ -62,7 +62,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             var Pics = await _caching.GetPhotosAsync();
             if (Pics == null)
             {
-                Pics = _dataAccess.GetPictures();
+                Pics = await _dataAccess.GetPicturesAsync();
                 _caching.InsertPhotosAsync(Pics);
             }
             if (Pics != null && !User.Identity.IsAuthenticated)
@@ -84,7 +84,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 var userPics = await _caching.GetVotesByUserId(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
-                    userPics = _dataAccess.GetVotesByUserId(user.Id);
+                    userPics = await _dataAccess.GetVotesByUserIdAsync(user.Id);
                     _caching.InsertVotesAsync(userPics);
                 }
                 if (Pics != null && userPics != null)
