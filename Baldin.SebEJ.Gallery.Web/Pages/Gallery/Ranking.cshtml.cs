@@ -28,7 +28,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             var rank = await _caching.GetRank(3);
             if (rank == null || rank.Count() == 0)
             {
-                rank = _dataAccess.GetPictures().OrderByDescending(x => x.Rating * 100 + x.Votes);
+                rank = (await _dataAccess.GetPicturesAsync()).OrderByDescending(x => x.Rating * 100 + x.Votes);
                 _caching.InsertPhotosAsync(rank);
             }
             Pictures = rank.Take(3);

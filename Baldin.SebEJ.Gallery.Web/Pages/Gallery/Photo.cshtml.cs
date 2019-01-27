@@ -24,12 +24,10 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         public Picture Picture { get; set; }
         public IEnumerable<Comment> Comments { get; set; }
 
-        public void OnGet(int photoId)
+        public async Task OnGet(int photoId)
         {
-            Picture = _dataAccess.GetPicture(photoId);
-            Comments = _dataAccess.GetCommentsByPhotoId(photoId);
+            Picture = await _dataAccess.GetPictureAsync(photoId);
+            Comments = await _dataAccess.GetCommentsByPhotoIdAsync(photoId);
         }
-
-
     }
 }

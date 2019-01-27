@@ -44,7 +44,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             var Pics = await caching.GetPhotosAsync();
             if (Pics == null)
             {
-                Pics = dataAccess.GetPictures();
+                Pics = await dataAccess.GetPicturesAsync();
                 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 caching.InsertPhotosAsync(Pics);
                 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -70,7 +70,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var userPics = await caching.GetVotesByUserId(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
-                    userPics = dataAccess.GetVotesByUserId(user.Id);
+                    userPics = await dataAccess.GetVotesByUserIdAsync(user.Id);
                     #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     caching.InsertVotesAsync(userPics);
                     #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -120,7 +120,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     Name = name,
                     User_Id = user.Id
                 };
-                dataAccess.InsertPicture(pic);
+                await dataAccess.InsertPictureAsync(pic);
                 await imageManager.SaveAsync(Photo.OpenReadStream(), name);
             }
             return RedirectToPage("/Gallery/Index");
