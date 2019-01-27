@@ -100,7 +100,7 @@
     var pageNum = Math.Ceiling((double)Model.TotalImages / 6);
 }
 <nav aria-label="gallery pagination">
-    <ul class="pagination">
+    <ul class="pagination justify-content-center">
         <li class="page-item @(Model.GalleryPage == 1 ? "disabled" : "")">
             <a class="page-link" asp-page="/Gallery/Index" asp-route-pg="@(Model.GalleryPage - 1)" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
