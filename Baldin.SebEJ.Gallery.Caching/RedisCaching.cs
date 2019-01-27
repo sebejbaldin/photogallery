@@ -29,6 +29,7 @@ namespace Baldin.SebEJ.Gallery.Caching
                     "PING", "ECHO", "CLIENT"
                 }, available: false),
                 KeepAlive = 180,
+                ConnectTimeout = 2000,
                 Password = redis["Password"],
                 ReconnectRetryPolicy = new ExponentialRetry(10000),
                 ConnectRetry = 2,
