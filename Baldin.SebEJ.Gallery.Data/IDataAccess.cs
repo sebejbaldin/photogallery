@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Baldin.SebEJ.Gallery.Data
 {
     public interface IDataAccess
     {
         Picture GetPicture(int Id);
+        Picture GetPictureByUrl(string url);
         IEnumerable<Picture> GetPictures();
         bool InsertPicture(Picture picture);
         bool UpdatePicture(Picture picture);
@@ -25,5 +27,25 @@ namespace Baldin.SebEJ.Gallery.Data
         bool InsertComment(Comment comment);
         bool UpdateComment(Comment comment);
         bool DeleteComment(int Id);
+
+        Task<Picture> GetPictureAsync(int Id);
+        Task<Picture> GetPictureByUrlAsync(string url);
+        Task<IEnumerable<Picture>> GetPicturesAsync();
+        Task<bool> InsertPictureAsync(Picture picture);
+        Task<bool> UpdatePictureAsync(Picture picture);
+        Task<bool> DeletePictureAsync(int Id);
+
+        Task<IEnumerable<Vote>> GetVotesAsync();
+        Task<IEnumerable<Vote>> GetVotesByUserIdAsync(string userId);
+        Task<bool> InsertVoteAsync(Vote vote);
+        Task<bool> UpdateVoteAsync(Vote vote);
+        Task<bool> DeleteVoteAsync(int Id);
+
+        Task<Comment> GetCommentAsync(int Id);
+        Task<IEnumerable<Comment>> GetCommentsAsync();
+        Task<IEnumerable<Comment>> GetCommentsByPhotoIdAsync(int photoId);
+        Task<bool> InsertCommentAsync(Comment comment);
+        Task<bool> UpdateCommentAsync(Comment comment);
+        Task<bool> DeleteCommentAsync(int Id);
     }
 }
