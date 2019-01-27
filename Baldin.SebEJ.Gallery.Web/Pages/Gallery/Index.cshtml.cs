@@ -35,9 +35,12 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         [BindProperty]
         public IFormFile Photo { get; set; }
         public IEnumerable<User_Picture> Pictures { get; set; }
+        public int GalleryPage { get; set; }
+        public int TotalImages { get; set; }
 
-        public async Task OnGet()
+        public async Task OnGet(int pg = 1)
         {
+            GalleryPage = pg;
             var Pics = await caching.GetPhotosAsync();
             if (Pics == null)
             {
@@ -46,6 +49,8 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 caching.InsertPhotosAsync(Pics);
                 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
+            TotalImages = Pics.Count();
+            Pics = Pics.OrderBy(x => x.Id).Skip(6 * (pg - 1)).Take(6);
             if (Pics != null && !User.Identity.IsAuthenticated)
             {
                 Pictures = Pics.Select(elem => new User_Picture
@@ -57,7 +62,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     Thumbnail_Url = elem.Thumbnail_Url,
                     Author = elem.User_Id,
                     IsVoted = true
-                }).ToList();
+                });
             }
             else
             {
