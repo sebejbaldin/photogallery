@@ -34,13 +34,11 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         [BindProperty]
         public IFormFile Photo { get; set; }
-        public IEnumerable<User_Picture> Pictures { get; set; }
-        public int GalleryPage { get; set; }
-        public int TotalImages { get; set; }
+        public PaginatedList<User_Picture> Pictures { get; set; }
 
-        public async Task OnGet(int pg = 1)
+        public async Task OnGet(int index = 1)
         {
-            GalleryPage = pg;
+            IEnumerable<User_Picture> user_Pictures = null;
             var Pics = await caching.GetPhotosAsync();
             if (Pics == null)
             {
@@ -49,11 +47,9 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 caching.InsertPhotosAsync(Pics);
                 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
-            TotalImages = Pics.Count();
-            Pics = Pics.OrderBy(x => x.Id).Skip(6 * (pg - 1)).Take(6);
             if (Pics != null && !User.Identity.IsAuthenticated)
             {
-                Pictures = Pics.Select(elem => new User_Picture
+                user_Pictures = Pics.Select(elem => new User_Picture
                 {
                     Id = elem.Id,
                     Rating = elem.Rating,
@@ -77,7 +73,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 }
                 if (Pics != null && userPics != null)
                 {
-                    Pictures = Pics.Select(elem => new User_Picture
+                    user_Pictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -90,7 +86,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 }
                 else if (Pics != null)
                 {
-                    Pictures = Pics.Select(elem => new User_Picture
+                    user_Pictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -102,6 +98,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     });
                 }
             }
+            Pictures = PaginatedList<User_Picture>.Create(user_Pictures.OrderBy(x => x.Id), index, 6);
         }
 
         public async Task<IActionResult> OnPost()

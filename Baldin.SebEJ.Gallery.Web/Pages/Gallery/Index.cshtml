@@ -1,4 +1,4 @@
-﻿@page "{pg}"
+﻿@page "{index?}"
 @model Baldin.SebEJ.Gallery.Web.Pages.Gallery.IndexModel
 @inject UserManager<IdentityUser> userManager
 @{
@@ -96,27 +96,29 @@
     </div>
         }
 </div>
-@{ 
-    var pageNum = Math.Ceiling((double)Model.TotalImages / 6);
-}
+
 <nav aria-label="gallery pagination">
     <ul class="pagination justify-content-center">
-        <li class="page-item @(Model.GalleryPage == 1 ? "disabled" : "")">
-            <a class="page-link" asp-page="/Gallery/Index" asp-route-pg="@(Model.GalleryPage - 1)" aria-label="Previous">
+        <li class="page-item @(Model.Pictures.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex - 1)" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
             </a>
         </li>
-        @for (int i = Model.GalleryPage - 2 - 1; i < Model.GalleryPage + 2 && i < pageNum; i++)
+        @*@for (int i = Model.Pictures.PageIndex - 2 - 1; i < Model.Pictures.PageIndex + 2 && i < Model.Pictures.TotalPages; i++)
         {
             if (i < 0)
             {
                 continue;
             }
-            <li class="page-item @(Model.GalleryPage == i + 1 ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-pg="@(i+1)">@(i+1)</a></li>
+            <li class="page-item @(Model.Pictures.PageIndex == i + 1 ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(i+1)">@(i+1)</a></li>
+        }*@
+        @foreach (var index in Model.Pictures.GetRoutePages())
+        {
+            <li class="page-item @(Model.Pictures.PageIndex == index ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(index)">@(index)</a></li>
         }
-        <li class="page-item @(pageNum <= Model.GalleryPage ? "disabled" : "")">
-            <a class="page-link" asp-page="/Gallery/Index" asp-route-pg="@(Model.GalleryPage + 1)" aria-label="Next">
+        <li class="page-item @(Model.Pictures.HasNextPage ? "" : "disabled")">
+            <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex + 1)" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
             </a>
