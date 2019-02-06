@@ -222,5 +222,20 @@ namespace Baldin.SebEJ.Gallery.Caching
         {
             return _multiplexer.IsConnected;
         }
+
+        public Task<bool> UpdatePictureAsync(Picture picture)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<IEnumerable<int>> ICaching.GetVotesByUserId(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Picture>> GetPhotosByScoreAsync(int start, int end = -1)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
