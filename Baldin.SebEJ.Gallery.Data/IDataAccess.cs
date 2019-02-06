@@ -11,7 +11,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Picture GetPicture(int Id);
         Picture GetPictureByUrl(string url);
         IEnumerable<Picture> GetPictures();
-        bool InsertPicture(Picture picture);
+        int InsertPicture(Picture picture);
         bool UpdatePicture(Picture picture);
         bool DeletePicture(int Id);
 
@@ -31,7 +31,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Task<Picture> GetPictureAsync(int Id);
         Task<Picture> GetPictureByUrlAsync(string url);
         Task<IEnumerable<Picture>> GetPicturesAsync();
-        Task<bool> InsertPictureAsync(Picture picture);
+        Task<int> InsertPictureAsync(Picture picture);
         Task<bool> UpdatePictureAsync(Picture picture);
         Task<bool> DeletePictureAsync(int Id);
 

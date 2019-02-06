@@ -292,7 +292,7 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
-        public bool InsertPicture(Picture picture)
+        public int InsertPicture(Picture picture)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -306,11 +306,13 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Url
                                     ,@Votes
                                     ,@Total_Rating)";
-                return conn.Execute(sql, picture) > 0;
+                conn.Execute(sql, picture);
+                sql = @"SELECT Id FROM [dbo].[Pictures] WHERE Url = @Url";
+                return conn.ExecuteScalar<int>(sql, new { picture.Url });
             }
         }
 
-        public async Task<bool> InsertPictureAsync(Picture picture)
+        public async Task<int> InsertPictureAsync(Picture picture)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -324,7 +326,9 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Url
                                     ,@Votes
                                     ,@Total_Rating)";
-                return await conn.ExecuteAsync(sql, picture) > 0;
+                await conn.ExecuteAsync(sql, picture);
+                sql = @"SELECT Id FROM [dbo].[Pictures] WHERE Url = @Url";
+                return await conn.ExecuteScalarAsync<int>(sql, new { picture.Url });
             }
         }
 
