@@ -49,7 +49,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 else
                     pic = await _dataAccess.GetPictureAsync(vote.Picture_Id);
 
-                _caching.InsertPhotoAsync(pic);
+                _caching.UpdatePictureAsync(pic);
                 return Ok(new {
                     average = pic.Rating,
                     count = pic.Votes
