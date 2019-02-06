@@ -83,7 +83,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             if (!_multiplexer.IsConnected)
                 return null;
             var database = GetDatabase();
-            var res = await database.SortedSetRangeByRankAsync("ranking", 0, topN);
+            var res = await database.SortedSetRangeByRankAsync("ranking", 0, topN, Order.Descending);
             var rankRes = new List<string>();
             foreach (var item in res)
             {
