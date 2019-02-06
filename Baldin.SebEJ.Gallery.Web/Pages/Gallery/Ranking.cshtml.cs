@@ -25,7 +25,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         public async Task OnGet()
         {
-            var rank = await _caching.GetRank(3);
+            var rank = await _caching.GetRankAsync(3);
             if (rank == null || rank.Count() == 0)
             {
                 rank = (await _dataAccess.GetPicturesAsync()).OrderByDescending(x => x.Rating * 100 + x.Votes);

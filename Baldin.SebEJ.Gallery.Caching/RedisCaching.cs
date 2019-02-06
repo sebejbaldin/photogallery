@@ -171,7 +171,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             return false;
         }
 
-        public async Task<IEnumerable<Picture>> GetRank(int topN = -1)
+        public async Task<IEnumerable<Picture>> GetRankAsync(int topN = -1)
         {
             if (!_multiplexer.IsConnected)
                 return null;
@@ -228,7 +228,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             throw new NotImplementedException();
         }
 
-        Task<IEnumerable<int>> ICaching.GetVotesByUserId(string userId)
+        Task<IEnumerable<int>> ICaching.GetVotesByUserIdAsync(string userId)
         {
             throw new NotImplementedException();
         }

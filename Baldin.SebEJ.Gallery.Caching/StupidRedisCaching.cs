@@ -78,7 +78,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             return list;
         }
 
-        public async Task<IEnumerable<Picture>> GetRank(int topN = -1)
+        public async Task<IEnumerable<Picture>> GetRankAsync(int topN = -1)
         {
             if (!_multiplexer.IsConnected)
                 return null;
@@ -100,7 +100,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             return list;
         }
 
-        public async Task<IEnumerable<int>> GetVotesByUserId(string userId)
+        public async Task<IEnumerable<int>> GetVotesByUserIdAsync(string userId)
         {
             if (!_multiplexer.IsConnected)
                 return null;

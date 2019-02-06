@@ -63,7 +63,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             else
             {
                 var user = await userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = await caching.GetVotesByUserId(user.Id);
+                var userPics = await caching.GetVotesByUserIdAsync(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
                     var picsVoted = await dataAccess.GetVotesByUserIdAsync(user.Id);
