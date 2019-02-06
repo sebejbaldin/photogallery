@@ -89,8 +89,9 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 var userPics = await _caching.GetVotesByUserId(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
-                    userPics = await _dataAccess.GetVotesByUserIdAsync(user.Id);
-                    _caching.InsertVotesAsync(userPics);
+                    var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                    _caching.InsertVotesAsync(picsVoted);
+                    userPics = picsVoted.Select(x => x.Picture_Id);
                 }
                 if (Pics != null && userPics != null)
                 {
@@ -102,7 +103,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         Url = elem.Url,
                         Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
-                        IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
+                        IsVoted = userPics.Any(item => item == elem.Id)
                     });
                 }
                 else if (Pics != null)

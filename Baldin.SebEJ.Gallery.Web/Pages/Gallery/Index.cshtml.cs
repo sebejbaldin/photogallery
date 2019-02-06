@@ -66,10 +66,11 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var userPics = await caching.GetVotesByUserId(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
-                    userPics = await dataAccess.GetVotesByUserIdAsync(user.Id);
+                    var picsVoted = await dataAccess.GetVotesByUserIdAsync(user.Id);
                     #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    caching.InsertVotesAsync(userPics);
-                    #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    caching.InsertVotesAsync(picsVoted);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    userPics = picsVoted.Select(x => x.Picture_Id);
                 }
                 if (Pics != null && userPics != null)
                 {
@@ -81,7 +82,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Url = elem.Url,
                         Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
-                        IsVoted = userPics.Any(item => item.Picture_Id == elem.Id)
+                        IsVoted = userPics.Any(item => item == elem.Id)
                     }).ToList();
                 }
                 else if (Pics != null)

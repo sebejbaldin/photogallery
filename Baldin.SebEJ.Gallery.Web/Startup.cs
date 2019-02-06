@@ -59,7 +59,7 @@ namespace Baldin.SebEJ.Gallery.Web
 
             services.AddTransient<IDataAccess, PgSQLData>();
             //services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
-            services.AddSingleton<ICaching, RedisCaching>();
+            services.AddSingleton<ICaching, StupidRedisCaching>();
             switch (Configuration["Storage"])
             {
                 case "Amazon":
