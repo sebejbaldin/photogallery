@@ -120,6 +120,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 };
                 await dataAccess.InsertPictureAsync(pic);
                 await imageManager.SaveAsync(Photo.OpenReadStream(), name);
+                await caching.InsertPhotoAsync(await dataAccess.GetPictureByUrlAsync(pic.Url));
             }
             return RedirectToPage("/Gallery/Index");
         }
