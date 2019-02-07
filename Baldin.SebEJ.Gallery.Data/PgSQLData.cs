@@ -278,6 +278,42 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public IEnumerable<Picture> GetPicturesRangeById(int startId, int endId)
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               WHERE id
+                               BETWEEN @startId AND @endId";
+                return conn.Query<Picture>(sql, new { startId, endId });
+            }
+        }
+
+        public async Task<IEnumerable<Picture>> GetPicturesRangeByIdAsync(int startId, int endId)
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               WHERE id 
+                               BETWEEN @startId AND @endId";
+                return await conn.QueryAsync<Picture>(sql, new { startId, endId });
+            }
+        }
+
         public IEnumerable<Vote> GetVotes()
         {
             using (var conn = new NpgsqlConnection(ConnectionString))
