@@ -18,6 +18,11 @@ namespace Baldin.SebEJ.Gallery.Web.Hubs
             await Clients.Group(groupName).SendAsync("EraseComment", commentId);
         }
 
+        public async Task UpdateComment(int commentId, string body, string groupName)
+        {
+            await Clients.Group(groupName).SendAsync("ModifyComment", commentId, body);
+        }
+
         public async Task AddToGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);

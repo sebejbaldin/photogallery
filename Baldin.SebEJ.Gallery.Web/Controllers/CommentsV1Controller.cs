@@ -42,12 +42,39 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         public async Task<IActionResult> DeleteComment(int commentId)
         {
             var comment = await _dataAccess.GetCommentAsync(commentId);
+            if (comment == null)
+                return NotFound();
             if (comment.Email != User.Identity.Name)
                 return Forbid();
             //var user = await _userManager.FindByEmailAsync(comment.Email);
 
             await _dataAccess.DeleteCommentAsync(commentId);
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPatch("{commentId}")]
+        //I made the class test because with it the binding works, i have tried many things but none of them have worked
+        //for example (int commentId, [FromBody] string textBody)
+        public async Task<IActionResult> UpdateComment(int commentId, ThisShouldNotExist textBody)
+        {
+            var comment = await _dataAccess.GetCommentAsync(commentId);
+            if (comment == null)
+                return NotFound();
+            if (comment.Email != User.Identity.Name)
+                return Forbid();
+            if (textBody == null)
+                return BadRequest();
+            
+            comment.Text = textBody.TextBody;
+
+            await _dataAccess.UpdateCommentAsync(comment);
+            return NoContent();
+        }
+
+        public class ThisShouldNotExist
+        {
+            public string TextBody { get; set; }
         }
     }
 }

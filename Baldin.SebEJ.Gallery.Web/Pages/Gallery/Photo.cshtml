@@ -68,12 +68,14 @@ else
                         <div class="card" style="width: 100%;">
                             <div class="card-body">
                                 <h5 class="card-title">@item.Email, @item.InsertDate.ToLocalTime()</h5>
-                                <p class="card-text" style="max-height: 40px; overflow-x: auto;" id="com_@item.Id">@item.Text</p>
-                                @if (User.Identity.Name == item.Email)
-                                {
-                                    <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
-                                    <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>
-                                }
+                                <div id="updateBox_@item.Id">
+                                    <p class="card-text" style="max-height: 40px; overflow-x: auto;" id="comText_@item.Id">@item.Text</p>
+                                    @if (User.Identity.Name == item.Email)
+                                    {
+                                        <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
+                                        <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,7 +84,6 @@ else
         }
     }
 </div>
-
 
 @section Scripts {
     <script>
