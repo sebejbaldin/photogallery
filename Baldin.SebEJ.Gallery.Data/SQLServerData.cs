@@ -276,7 +276,7 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
-        public bool InsertComment(Comment comment)
+        public int InsertComment(Comment comment)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -292,11 +292,18 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Email
                                     ,@Text
                                     ,@InsertDate)";
-                return conn.Execute(sql, comment) > 0;
+                bool completed = conn.Execute(sql, comment) > 0;
+                if (completed)
+                {
+                    sql = @"SELECT [Id] FROM [dbo].[Comments] 
+                            WHERE [Author] = @Author AND [Text] = @Text AND [InsertDate] = @InsertDate";
+                    return conn.QuerySingle<int>(sql, comment);
+                }
+                return -1;
             }
         }
 
-        public async Task<bool> InsertCommentAsync(Comment comment)
+        public async Task<int> InsertCommentAsync(Comment comment)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -312,7 +319,14 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Email
                                     ,@Text
                                     ,@InsertDate)";
-                return await conn.ExecuteAsync(sql, comment) > 0;
+                bool completed = await conn.ExecuteAsync(sql, comment) > 0;
+                if (completed)
+                {
+                    sql = @"SELECT [Id] FROM [dbo].[Comments] 
+                            WHERE [Author] = @Author AND [Text] = @Text AND [InsertDate] = @InsertDate";
+                    return await conn.QuerySingleAsync<int>(sql, comment);
+                }
+                return -1;
             }
         }
 

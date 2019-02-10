@@ -25,7 +25,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Comment GetComment(int Id);
         IEnumerable<Comment> GetComments();
         IEnumerable<Comment> GetCommentsByPhotoId(int photoId);
-        bool InsertComment(Comment comment);
+        int InsertComment(Comment comment);
         bool UpdateComment(Comment comment);
         bool DeleteComment(int Id);
 
@@ -46,7 +46,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Task<Comment> GetCommentAsync(int Id);
         Task<IEnumerable<Comment>> GetCommentsAsync();
         Task<IEnumerable<Comment>> GetCommentsByPhotoIdAsync(int photoId);
-        Task<bool> InsertCommentAsync(Comment comment);
+        Task<int> InsertCommentAsync(Comment comment);
         Task<bool> UpdateCommentAsync(Comment comment);
         Task<bool> DeleteCommentAsync(int Id);
     }

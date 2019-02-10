@@ -364,7 +364,7 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
-        public bool InsertComment(Comment comment)
+        public int InsertComment(Comment comment)
         {
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
@@ -380,11 +380,18 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Email
                                     ,@Text
                                     ,@InsertDate)";
-                return conn.Execute(sql, comment) > 0;
+                bool completed = conn.Execute(sql, comment) > 0;
+                if (completed)
+                {
+                    sql = @"SELECT id FROM sebej_comments 
+                            WHERE author = @Author AND text = @Text AND insert_date = @InsertDate";
+                    return conn.QuerySingle<int>(sql, comment);
+                }
+                return -1;
             }
         }
 
-        public async Task<bool> InsertCommentAsync(Comment comment)
+        public async Task<int> InsertCommentAsync(Comment comment)
         {
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
@@ -400,7 +407,14 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,@Email
                                     ,@Text
                                     ,@InsertDate)";
-                return await conn.ExecuteAsync(sql, comment) > 0;
+                bool completed = await conn.ExecuteAsync(sql, comment) > 0;
+                if (completed)
+                {
+                    sql = @"SELECT id FROM sebej_comments 
+                            WHERE author = @Author AND text = @Text AND insert_date = @InsertDate";
+                    return await conn.QuerySingleAsync<int>(sql, comment);
+                }
+                return -1;
             }
         }
 
