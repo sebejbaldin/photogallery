@@ -25,7 +25,9 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             try
             {
-                string path = WebRoot + @"\uploads\" + Guid.NewGuid().ToString();
+                string path = Path.Combine(WebRoot, "uploads");
+                Directory.CreateDirectory(path);
+                path = Path.Combine(path, Guid.NewGuid().ToString());
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
@@ -33,7 +35,7 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
             }
             finally
             {
-                image.Close();
+                image.Dispose();
             }
         }
 
@@ -41,7 +43,9 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
         {
             try
             {
-                string path = WebRoot + @"\uploads\" + name;
+                string path = Path.Combine(WebRoot, "uploads");
+                Directory.CreateDirectory(path);
+                path = Path.Combine(path, name);
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
                     await image.CopyToAsync(stream);
@@ -49,7 +53,7 @@ namespace Baldin.SebEJ.Gallery.ImageStorage
             }
             finally
             {
-                image.Close();
+                image.Dispose();
             }
         }
     }
