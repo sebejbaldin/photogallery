@@ -8,9 +8,9 @@ namespace Baldin.SebEJ.Gallery.Web.Hubs
 {
     public class GalleryHub : Hub
     {
-        public async Task SendComment(string username, string text, DateTime insertDate, string groupName)
+        public async Task SendComment(string username, string text, DateTime insertDate, int id, string groupName)
         {
-            await Clients.Group(groupName).SendAsync("ReceiveComment", username, text, insertDate.ToString("dd/MM/yyyy HH:mm"));
+            await Clients.Group(groupName).SendAsync("ReceiveComment", username, text, insertDate.ToUniversalTime(), id);
         }
 
         public async Task DeleteComment(int commentId, string groupName)

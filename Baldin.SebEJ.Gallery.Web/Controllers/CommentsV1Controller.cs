@@ -33,8 +33,8 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             var user = await _userManager.FindByEmailAsync(comment.Email);
             comment.Author = user.Id;
             comment.InsertDate = DateTime.UtcNow;
-            await _dataAccess.InsertCommentAsync(comment);
-            return Ok();
+            var id = await _dataAccess.InsertCommentAsync(comment);
+            return Ok(id);
         }
 
         [Authorize]

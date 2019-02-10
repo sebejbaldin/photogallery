@@ -11,8 +11,10 @@ commentText.addEventListener('input', () => {
 
 var connection = new signalR.HubConnectionBuilder().withUrl('/Comments').build();
 
-connection.on('ReceiveComment', (email, text, insertDate) => {
-    appendComment(email, text, new Date(insertDate).toLocaleString());
+connection.on('ReceiveComment', (email, text, insertDate, comment_id) => {
+    if (username !== email) {
+        appendComment(email, text, new Date(insertDate).toLocaleString(), comment_id);
+    }
 });
 
 connection.on('EraseComment', (comment_id) => {
@@ -26,8 +28,8 @@ connection.on('ModifyComment', (comment_id, body) => {
     }
 });
 
-document.getElementById('sendComment').addEventListener('click', () => {
-    connection.invoke('SendComment', username, commentText.value, new Date(), postId);
+document.getElementById('sendComment').addEventListener('click', async () => {
+    let date = new Date();
     let payload = {
         picture_Id: postId,
         email: username,
@@ -35,16 +37,25 @@ document.getElementById('sendComment').addEventListener('click', () => {
     };
     commentText.value = '';
     charCounter.innerText = '0';
-    fetch('/api/v1/comments', {
+    await fetch('/api/v1/comments', {
         method: 'POST',
         credentials: 'include',
         headers: {
-            "Content-Type": 'application/json'
+            'Content-Type': 'application/json'
         },
-        mode: "cors",
-        cache: "no-cache",
+        mode: 'cors',
+        cache: 'no-cache',
         body: JSON.stringify(payload)
-    }).catch(err => {
+    })
+        .then(resCommentId => {
+            return resCommentId.json();
+        })
+        .then(commentId => {
+            console.log('Id Commento: ' + commentId);
+            connection.invoke('SendComment', username, payload.text, date, commentId, postId);
+            appendComment(username, payload.text, date.toLocaleString(), commentId, true);
+        })
+    .catch(err => {
         console.error(err);
     });
 });
@@ -57,30 +68,34 @@ connection.start()
         return console.error(err.toString());
     });
 
-function appendComment(email, text, creationDate) {
+function appendComment(email, text, creationDate, comment_id, isAuthor) {
     let container = document.createElement('div');
     text = normalizeInput(text);
     container.setAttribute('class', 'col-12');
-    container.innerHTML = getComment(email, text, creationDate);
+    container.setAttribute('id', `comment_${comment_id}`);
+    container.setAttribute('style', 'border-bottom: 10px;');
+    container.innerHTML = getComment(email, text, creationDate, comment_id, isAuthor);
     comments.appendChild(container);
 }
 
-function getComment(email, text, creationDate, isMine) {
+function getComment(email, text, creationDate, comment_id, isMine) {
     let comm = `<div class="row">
-                <div class="col-1">
-                    <i class="fas fa-user fa-2x"></i>
-                </div>
-                <div class="col-11">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
+                    <div class="col-1">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                    <div class="col-11">
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
                             <h5 class="card-title">${email}, ${creationDate}</h5>
-                            <p class="card-text">${text}</p>`;
+                            <div id="updateBox_${comment_id}">
+                                    <p class="card-text" style="max-height: 40px; overflow-x: auto;" id="comText_${comment_id}">${text}</p>`;
     if (isMine) {
-        comm += `<button class="btn btn-link mod" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(@item.Id);">Modify</button>
-                                    <button class="btn btn-link del" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(@item.Id);">Delete</button>`;
+        comm += `<button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="updateComment(${comment_id});">Modify</button>
+                 <button class="btn btn-link" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="deleteComment(${comment_id});">Delete</button>`;
     }
 
-    comm += `</div></div></div></div>`;
+    comm += `</div></div></div></div></div>`;
+    
     return comm;
 }
 
