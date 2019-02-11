@@ -48,18 +48,11 @@ else
 <hr />
 
 <div class="row" id="comments_box">
-    @*@if (Model.Comments == null || Model.Comments.Count() <= 0)
-        {
-            <div class="col">
-                <p style="text-align:center;">Commenta per primo!</p>
-            </div>
-        }
-        else*@
     @if (Model.Comments != null && Model.Comments.Count() > 0)
     {
         @foreach (var item in Model.Comments)
         {
-            <div class="col-12" id="comment_@item.Id" style="border-bottom: 10px;">
+            <div class="col-12 mb-2" id="comment_@item.Id">
                 <div class="row">
                     <div class="col-1">
                         <i class="fas fa-user fa-2x"></i>

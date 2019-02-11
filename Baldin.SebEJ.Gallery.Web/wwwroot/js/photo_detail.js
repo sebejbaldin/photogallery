@@ -71,9 +71,8 @@ connection.start()
 function appendComment(email, text, creationDate, comment_id, isAuthor) {
     let container = document.createElement('div');
     text = normalizeInput(text);
-    container.setAttribute('class', 'col-12');
+    container.setAttribute('class', 'col-12 mb-2');
     container.setAttribute('id', `comment_${comment_id}`);
-    container.setAttribute('style', 'border-bottom: 10px;');
     container.innerHTML = getComment(email, text, creationDate, comment_id, isAuthor);
     comments.appendChild(container);
 }
