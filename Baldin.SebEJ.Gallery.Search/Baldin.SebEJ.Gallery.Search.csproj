@@ -8,4 +8,8 @@
     <PackageReference Include="NEST" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Baldin.SebEJ.Gallery.Data\Baldin.SebEJ.Gallery.Data.csproj" />
+  </ItemGroup>
+
 </Project>
