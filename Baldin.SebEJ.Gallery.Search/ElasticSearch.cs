@@ -31,9 +31,12 @@ namespace Baldin.SebEJ.Gallery.Search
             _client = new ElasticClient(connConfig);
         }
 
-        public Task<bool> BulkInsertUsersPicturesAsync(IEnumerable<ES_UserPhotos> usersPhotos)
+        public async Task<bool> BulkInsertUsersPicturesAsync(IEnumerable<ES_UserPhotos> usersPhotos)
         {
-            throw new NotImplementedException();
+            var resp = await _client.BulkAsync(b => b
+                .IndexMany<ES_UserPhotos>(usersPhotos)
+            );
+            return resp.IsValid;
         }
 
         public async Task<bool> InsertUserPicturesAsync(ES_UserPhotos userPhotos)
