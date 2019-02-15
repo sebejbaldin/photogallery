@@ -22,6 +22,7 @@ namespace Baldin.SebEJ.Gallery.Search
                 .DefaultMappingFor<ES_UserPhotos>(e => e
                     .IndexName("photos")
                     .TypeName("userPhotos")
+                    .IdProperty(id => id.Email)
                 )
                 .DefaultMappingFor<ES_Picture>(e => e
                     .IndexName("photos")
