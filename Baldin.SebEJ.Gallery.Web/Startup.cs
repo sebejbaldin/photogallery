@@ -19,6 +19,7 @@ using Baldin.SebEJ.Gallery.Web.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using Baldin.SebEJ.Gallery.Caching;
 using Baldin.SebEJ.Gallery.Search;
+using Baldin.SebEJ.Gallery.Search.Models;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -81,7 +82,7 @@ namespace Baldin.SebEJ.Gallery.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISearch search, IDataAccess dataAccess, UserManager<IdentityUser> userManager)
         {
             app.UseForwardedHeaders();
             if (env.IsDevelopment())
@@ -95,6 +96,28 @@ namespace Baldin.SebEJ.Gallery.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var data = dataAccess.GetPictures().GroupBy(x => x.User_Id);
+            var esData = new List<ES_UserPhotos>();
+            foreach (var group in data)
+            {
+                string email = userManager.FindByIdAsync(group.Key).Result.Email;
+                esData.Add(new ES_UserPhotos()
+                {
+                    Email = email,
+                    UserName = email,
+                    Pictures = group.Select(x => new ES_Picture
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Rating = x.Rating,
+                        Thumbnail_Url = x.Thumbnail_Url ?? x.Url,
+                        Votes = x.Votes
+                    })
+                });
+            }
+
+            search.BulkInsertUsersPicturesAsync(esData);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
