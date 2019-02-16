@@ -131,9 +131,10 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         {
             var result = await _search.SearchAsync(query);
             var tosend = new List<User_Picture>();
+            IEnumerable<int> userPics = new int[0];
+
             if (result != null && result.Count() > 0)
             {
-                IEnumerable<int> userPics;
 
                 if (User.Identity.IsAuthenticated)
                 {
@@ -146,8 +147,6 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
                 }
-                else
-                    userPics = new int[0];
                 
                 foreach (var userPhotos in result)
                 {
@@ -166,6 +165,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                     }
                 }
             }
+            
             return tosend;
         }
     }
