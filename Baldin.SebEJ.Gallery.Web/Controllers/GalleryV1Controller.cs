@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Baldin.SebEJ.Gallery.Web.Models;
 using Baldin.SebEJ.Gallery.Caching;
+using Baldin.SebEJ.Gallery.Search;
 
 namespace Baldin.SebEJ.Gallery.Web.Controllers
 {
@@ -20,12 +21,14 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         private IDataAccess _dataAccess;
         private UserManager<IdentityUser> _userManager;
         private ICaching _caching;
+        private ISearch _search;
 
-        public GalleryV1Controller(IDataAccess dataAccess, UserManager<IdentityUser> userManager, ICaching caching)
+        public GalleryV1Controller(IDataAccess dataAccess, UserManager<IdentityUser> userManager, ICaching caching, ISearch search)
         {
             _dataAccess = dataAccess;
             _userManager = userManager;
             _caching = caching;
+            _search = search;
         }
 
         [Authorize]
@@ -121,6 +124,49 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 }
             }
             return null;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<User_Picture>> Search(string query)
+        {
+            var result = await _search.SearchAsync(query);
+            var tosend = new List<User_Picture>();
+            if (result != null && result.Count() > 0)
+            {
+                IEnumerable<int> userPics;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                    userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    if (userPics == null || userPics.Count() == 0)
+                    {
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        _caching.InsertVotesAsync(picsVoted);
+                        userPics = picsVoted.Select(x => x.Picture_Id);
+                    }
+                }
+                else
+                    userPics = new int[0];
+                
+                foreach (var userPhotos in result)
+                {
+                    foreach (var photo in userPhotos.Pictures)
+                    {
+                        tosend.Add(new User_Picture
+                        {
+                            Author = userPhotos.Email,
+                            Id = photo.Id,
+                            IsVoted = userPics.Any(item => item == photo.Id),
+                            Rating = photo.Rating,
+                            Thumbnail_Url = photo.Thumbnail_Url,
+                            Url = photo.Thumbnail_Url,
+                            Votes = photo.Votes
+                        });
+                    }
+                }
+            }
+            return tosend;
         }
     }
 }
