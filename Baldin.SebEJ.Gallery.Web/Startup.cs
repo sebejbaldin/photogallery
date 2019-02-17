@@ -63,13 +63,16 @@ namespace Baldin.SebEJ.Gallery.Web
             switch (Configuration["Storage"])
             {
                 case "Amazon":
+                    Configuration["PhotoUrl"] = Configuration["CloudStorage:Amazon:Storage"] + Configuration["CloudStorage:Amazon:Folder"];
                     services.AddTransient<IImageManager, AWSUploaderS3>();
                     break;
                 case "Azure":
+                    Configuration["PhotoUrl"] = Configuration["CloudStorage:Azure:Storage"] + Configuration["CloudStorage:Azure:Folder"];
                     services.AddTransient<IImageManager, AzureStorageUploader>();
                     break;
                 default:
-                    throw new Exception("Storage setting not provided.");
+                    Configuration["PhotoUrl"] = "/uploads";
+                    services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
                     break;
             }
 
