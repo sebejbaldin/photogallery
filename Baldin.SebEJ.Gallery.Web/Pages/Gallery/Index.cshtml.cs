@@ -114,6 +114,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var storageUrlConf = "CloudStorage:" + configuration["Storage"] + ":Storage";
                 var pic = new Picture
                 {
+                    OriginalName = Photo.FileName,
                     Url = configuration[storageUrlConf] + "images/" + name,
                     Name = name,
                     User_Id = user.Id

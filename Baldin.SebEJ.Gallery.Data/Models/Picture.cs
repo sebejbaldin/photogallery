@@ -7,6 +7,7 @@ namespace Baldin.SebEJ.Gallery.Data.Models
     public class Picture
     {
         public int Id { get; set; }
+        public string OriginalName { get; set; }
         public string Name { get; set; }
         public string User_Id { get; set; }
         public string Url { get; set; }
