@@ -45,11 +45,13 @@ namespace Baldin.SebEJ.Gallery.Search
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ES_DN_Photo>> SearchPhotosAsync(string query)
+        public async Task<IEnumerable<ES_DN_Photo>> SearchPhotosAsync(string query, int page = 1)
         {
+            if (page < 1)
+                page = 1;
             var resp = await _client.SearchAsync<ES_DN_Photo>(e => e
-                .From(0)
-                .Size(6)
+                .From((page - 1) * 6)
+                .Size(page * 6)
                 .Query(q => q
                     .MultiMatch(mm => mm                    
                         .Fields(f => f
