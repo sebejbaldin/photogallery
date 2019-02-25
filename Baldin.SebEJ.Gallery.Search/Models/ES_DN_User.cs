@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Baldin.SebEJ.Gallery.Search.Models
 {
-    public class ES_UserPhotos
+    public class ES_DN_User
     {
         public string UserName { get; set; }
         public string Email { get; set; }
-        public IEnumerable<ES_Picture> Pictures { get; set; }
     }
 }
