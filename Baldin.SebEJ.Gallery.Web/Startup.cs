@@ -98,26 +98,30 @@ namespace Baldin.SebEJ.Gallery.Web
             }
 
             var data = dataAccess.GetPictures().GroupBy(x => x.User_Id);
-            var esData = new List<ES_UserPhotos>();
+            var esData = new List<ES_DN_Photo>();
             foreach (var group in data)
             {
                 string email = userManager.FindByIdAsync(group.Key).Result.Email;
-                esData.Add(new ES_UserPhotos()
-                {
-                    Email = email,
-                    UserName = email,
-                    Pictures = group.Select(x => new ES_Picture
+
+                esData.AddRange(group.Select(e => new ES_DN_Photo {
+                    PhotoId = e.Id,
+                    User = new ES_DN_User
                     {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Rating = x.Rating,
-                        Thumbnail_Url = x.Thumbnail_Url ?? x.Url,
-                        Votes = x.Votes
-                    })
-                });
+                        Email = email,
+                        UserName = email
+                    },
+                    Data = new ES_DN_Data
+                    {
+                        Name = e.OriginalName ?? e.Name,
+                        TotalRating = e.Total_Rating,
+                        Votes = e.Votes,
+                        Url = e.Url,
+                        Thumbnail_Url = e.Thumbnail_Url ?? e.Url
+                    }
+                }));
             }
 
-            search.BulkInsertUsersPicturesAsync(esData);
+            search.InsertPhotosAsync(esData);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

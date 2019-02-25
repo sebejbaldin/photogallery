@@ -30,20 +30,20 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             var list = new List<User_Picture>();
             if (query != null)
             {
-                var res = await _search.SearchAsync(query);
+                var res = await _search.SearchPhotosAsync(query);
                 foreach (var item in res)
                 {
-                    var userData = await _userManager.FindByEmailAsync(item.Email);
-                    list.AddRange(item.Pictures.Select(e => new User_Picture
+                    var userData = await _userManager.FindByEmailAsync(item.User.Email);
+                    list.Add(new User_Picture
                     {
-                        Id = e.Id,
-                        Rating = e.Rating,
-                        Thumbnail_Url = e.Thumbnail_Url,
-                        Url = e.Thumbnail_Url,
+                        Id = item.PhotoId,
+                        Rating = item.Data.Rating,
+                        Thumbnail_Url = item.Data.Thumbnail_Url,
+                        Url = item.Data.Url,
                         Author = userData.Id,
-                        Votes = e.Votes,
+                        Votes = item.Data.Votes,
                         IsVoted = true
-                    }));
+                    });
                 }
             }
             Photos = list;

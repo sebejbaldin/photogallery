@@ -129,7 +129,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<User_Picture>> Search(string query)
         {
-            var result = await _search.SearchAsync(query);
+            var result = await _search.SearchPhotosAsync(query);
             var tosend = new List<User_Picture>();
             IEnumerable<int> userPics = new int[0];
 
@@ -147,25 +147,24 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
                 }
-                
-                foreach (var userPhotos in result)
+
+                foreach (var item in result)
                 {
-                    foreach (var photo in userPhotos.Pictures)
+                    var userData = await _userManager.FindByEmailAsync(item.User.Email);
+                    tosend.Add(new User_Picture
                     {
-                        tosend.Add(new User_Picture
-                        {
-                            Author = userPhotos.Email,
-                            Id = photo.Id,
-                            IsVoted = userPics.Any(item => item == photo.Id),
-                            Rating = photo.Rating,
-                            Thumbnail_Url = photo.Thumbnail_Url,
-                            Url = photo.Thumbnail_Url,
-                            Votes = photo.Votes
-                        });
-                    }
+                        Id = item.PhotoId,
+                        Rating = item.Data.Rating,
+                        Thumbnail_Url = item.Data.Thumbnail_Url,
+                        Url = item.Data.Url,
+                        Author = userData.Id,
+                        Votes = item.Data.Votes,
+                        IsVoted = userPics.Any(vote => vote == item.PhotoId)
+                    });
                 }
+                
             }
-            
+
             return tosend;
         }
     }
