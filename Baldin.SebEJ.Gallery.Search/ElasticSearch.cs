@@ -40,9 +40,10 @@ namespace Baldin.SebEJ.Gallery.Search
             return resp.IsValid;
         }
        
-        public Task<bool> UpdatePhotoAsync(ES_DN_Photo photo)
+        public async Task<bool> UpdatePhotoAsync(ES_DN_Photo photo)
         {
-            throw new NotImplementedException();
+            var resp = await _client.IndexDocumentAsync(photo);
+            return resp.IsValid;
         }
 
         public async Task<IEnumerable<ES_DN_Photo>> SearchPhotosAsync(string query, int page = 1)
