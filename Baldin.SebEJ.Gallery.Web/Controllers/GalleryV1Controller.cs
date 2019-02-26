@@ -129,10 +129,10 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<User_Picture>> GetPaginatedPictures(int index)
         {
-            var Pics = await _caching.GetPhotosAsync();
+            var Pics = await _caching.GetPhotosByScoreAsync((index - 1) * 6, index * 6);
             if (Pics == null)
             {
-                Pics = await _dataAccess.GetPicturesAsync();
+                Pics = await _dataAccess.GetPaginatedPicturesAsync(index, 6);
                 _caching.InsertPhotosAsync(Pics);
             }
             if (Pics != null && !User.Identity.IsAuthenticated)
