@@ -222,6 +222,26 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public long GetPictureCount()
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT COUNT(*)
+                               FROM [dbo].[Pictures]";
+                return conn.ExecuteScalar<long>(sql);
+            }
+        }
+
+        public async Task<long> GetPictureCountAsync()
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT COUNT(*)
+                               FROM [dbo].[Pictures]";
+                return await conn.ExecuteScalarAsync<long>(sql);
+            }
+        }
+
         public IEnumerable<Picture> GetPictures()
         {
             using (var conn = new SqlConnection(ConnectionString))

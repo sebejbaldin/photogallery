@@ -8,6 +8,9 @@ namespace Baldin.SebEJ.Gallery.Data
 {
     public interface IDataAccess
     {
+        long GetPictureCount();
+        Task<long> GetPictureCountAsync();
+
         Picture GetPicture(int Id);
         Picture GetPictureByUrl(string url);
         IEnumerable<Picture> GetPicturesRangeById(int startId, int endId);

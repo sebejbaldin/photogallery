@@ -294,6 +294,26 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public long GetPictureCount()
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT count(*)
+                               FROM sebej_pictures";
+                return conn.ExecuteScalar<long>(sql);
+            }
+        }
+
+        public async Task<long> GetPictureCountAsync()
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT count(*)
+                               FROM sebej_pictures";
+                return await conn.ExecuteScalarAsync<long>(sql);
+            }
+        }
+
         public IEnumerable<Picture> GetPictures()
         {
             using (var conn = new NpgsqlConnection(ConnectionString))
