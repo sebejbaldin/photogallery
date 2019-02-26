@@ -9,6 +9,13 @@
         "dist/browser/signalr.min.js",
         "dist/browser/signalr.js"
       ]
+    },
+    {
+      "library": "idb@3.0.2",
+      "destination": "wwwroot/lib/idb/",
+      "files": [
+        "build/idb.js"
+      ]
     }
   ]
 }
