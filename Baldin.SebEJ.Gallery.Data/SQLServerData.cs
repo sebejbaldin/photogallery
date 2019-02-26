@@ -146,6 +146,38 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public IEnumerable<Picture> GetPaginatedPictures(int index, int pageCount)
+        {
+            if (index < 1)
+                index = 1;
+           
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT *
+                               FROM [dbo].[Pictures]
+                               ORDER BY [dbo].[Id]
+                               OFFSET ((@PageNumber - 1) * @RowspPage) ROWS
+                               FETCH NEXT @RowspPage ROWS ONLY";
+                return conn.Query<Picture>(sql, new { PageNumber=index, RowspPage=pageCount });
+            }
+        }
+
+        public async Task<IEnumerable<Picture>> GetPaginatedPicturesAsync(int index, int pageCount)
+        {
+            if (index < 1)
+                index = 1;
+
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT *
+                               FROM [dbo].[Pictures]
+                               ORDER BY [dbo].[Id]
+                               OFFSET ((@PageNumber - 1) * @RowspPage) ROWS
+                               FETCH NEXT @RowspPage ROWS ONLY";
+                return await conn.QueryAsync<Picture>(sql, new { PageNumber = index, RowspPage = pageCount });
+            }
+        }
+
         public Picture GetPicture(int Id)
         {
             using (var conn = new SqlConnection(ConnectionString))

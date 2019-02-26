@@ -178,6 +178,50 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public IEnumerable<Picture> GetPaginatedPictures(int index, int pageCount)
+        {
+            if (index < 1)
+                index = 1;
+
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               ORDER BY id
+                               LIMIT @lim OFFSET @offs";
+                return conn.Query<Picture>(sql, new { lim = pageCount, offs = (index - 1) * pageCount });
+            }
+        }
+
+        public async Task<IEnumerable<Picture>> GetPaginatedPicturesAsync(int index, int pageCount)
+        {
+            if (index < 1)
+                index = 1;
+
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               ORDER BY id
+                               LIMIT @lim OFFSET @offs";
+                return await conn.QueryAsync<Picture>(sql, new { lim = pageCount, offs = (index - 1) * pageCount });
+            }
+        }
+
         public Picture GetPicture(int Id)
         {
             using (var conn = new NpgsqlConnection(ConnectionString))
