@@ -113,6 +113,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 var user = await userManager.GetUserAsync(User);
                 var pic = new Picture
                 {
+                    OriginalName = Photo.FileName,
                     Url = $"{configuration["PhotoUrl"]}/{name}",
                     Name = name,
                     User_Id = user.Id
