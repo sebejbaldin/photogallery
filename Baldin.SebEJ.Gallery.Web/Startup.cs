@@ -18,6 +18,8 @@ using Baldin.SebEJ.Gallery.ImageStorage;
 using Baldin.SebEJ.Gallery.Web.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using Baldin.SebEJ.Gallery.Caching;
+using Baldin.SebEJ.Gallery.Search;
+using Baldin.SebEJ.Gallery.Search.Models;
 
 namespace Baldin.SebEJ.Gallery.Web
 {
@@ -60,6 +62,7 @@ namespace Baldin.SebEJ.Gallery.Web
             services.AddTransient<IDataAccess, PgSQLData>();
             //services.AddSingleton<IImageManager>(new LocalUploader(Environment.WebRootPath));
             services.AddSingleton<ICaching, StupidRedisCaching>();
+            services.AddSingleton<ISearch, ElasticSearch>();
             switch (Configuration["Storage"])
             {
                 case "Amazon":
@@ -82,7 +85,7 @@ namespace Baldin.SebEJ.Gallery.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISearch search, IDataAccess dataAccess, UserManager<IdentityUser> userManager)
         {
             app.UseForwardedHeaders();
             if (env.IsDevelopment())
@@ -96,6 +99,32 @@ namespace Baldin.SebEJ.Gallery.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            var data = dataAccess.GetPictures().GroupBy(x => x.User_Id);
+            var esData = new List<ES_DN_Photo>();
+            foreach (var group in data)
+            {
+                string email = userManager.FindByIdAsync(group.Key).Result.Email;
+
+                esData.AddRange(group.Select(e => new ES_DN_Photo {
+                    PhotoId = e.Id,
+                    User = new ES_DN_User
+                    {
+                        Email = email,
+                        UserName = email
+                    },
+                    Data = new ES_DN_Data
+                    {
+                        Name = e.OriginalName ?? e.Name,
+                        TotalRating = e.Total_Rating,
+                        Votes = e.Votes,
+                        Url = e.Url,
+                        Thumbnail_Url = e.Thumbnail_Url ?? e.Url
+                    }
+                }));
+            }
+
+            search.InsertPhotosAsync(esData);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -1,0 +1,76 @@
+﻿@page
+@model Baldin.SebEJ.Gallery.Web.Pages.Gallery.SearchModel
+@inject UserManager<IdentityUser> userManager
+@{
+    ViewData["Title"] = "Search";
+    var user = await userManager.GetUserAsync(User);
+}
+
+<h1>Search</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="searchBox">Search</label>
+        <input type="text" class="form-control" name="query" id="searchBox" aria-describedby="search" placeholder="Search authors and photos">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<hr />
+
+<div class="row" id="gallery">
+    @foreach (var item in Model.Photos)
+    {
+        <div class="col-md-4 col-sm-6">
+            <div class="card" style="margin-bottom: 25px;">
+                <a asp-page="/Gallery/Photo" asp-route-photoId="@item.Id">
+                    @if (!string.IsNullOrEmpty(item.Thumbnail_Url))
+                    {
+                        <img class="card-img-top" style="height: 300px;" src="@item.Thumbnail_Url" alt="Card image cap">
+                    }
+                    else
+                    {
+                        <img class="card-img-top" style="height: 300px;" src="@item.Url" alt="Card image cap">
+                    }
+                </a>
+                <div class="card-body">
+                    <!--<h5 class="card-title">title</h5>-->
+                    <!--<p class="card-text">descr</p>-->
+                    <div id="card_board_@item.Id">
+                        @if (!item.IsVoted && item.Author != user.Id)
+                        {
+                            <form>
+                                <div class="row">
+                                    <div class="col">
+                                        <select name="vote" id="vote_@item.Id" class="form-control">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <button type="button" onclick="voteImage(@item.Id);" class="btn btn-primary btn-block">Vote</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <i class="fas fa-star"></i> @item.Rating.ToString("0.#")
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-poll"></i> @item.Votes
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

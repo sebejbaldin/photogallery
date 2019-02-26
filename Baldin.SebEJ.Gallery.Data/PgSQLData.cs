@@ -183,6 +183,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -200,6 +201,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -217,6 +219,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -234,6 +237,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -251,6 +255,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -267,6 +272,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -283,6 +289,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -301,6 +308,7 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
                                ,user_id AS User_Id
                                ,name AS Name
                                ,thumbnail_url AS Thumbnail_Url
@@ -424,6 +432,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"INSERT INTO sebej_pictures
                                     (name
+                                    ,original_name
                                     ,user_id
                                     ,url
                                     ,thumbnail_url
@@ -431,6 +440,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,total_rating)
                                VALUES
                                     (@Name
+                                    ,@OriginalName
                                     ,@User_Id
                                     ,@Url
                                     ,@Thumbnail_Url
@@ -448,6 +458,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"INSERT INTO sebej_pictures
                                     (name
+                                    ,original_name
                                     ,user_id
                                     ,url
                                     ,thumbnail_url
@@ -455,6 +466,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                     ,total_rating)
                                VALUES
                                     (@Name
+                                    ,@OriginalName
                                     ,@User_Id
                                     ,@Url
                                     ,@Thumbnail_Url
@@ -552,6 +564,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"UPDATE sebej_pictures
                                SET name = @Name
+                                  ,original_name = @OriginalName
                                   ,url = @Url
                                   ,votes = @Votes
                                   ,total_rating = @Total_Rating
@@ -566,6 +579,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"UPDATE sebej_pictures
                                SET name = @Name
+                                  ,original_name = @OriginalName
                                   ,url = @Url
                                   ,votes = @Votes
                                   ,total_rating = @Total_Rating
