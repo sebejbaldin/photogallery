@@ -39,7 +39,7 @@ namespace Baldin.SebEJ.Gallery.Web.Models
             var pages = new int[span * 2 + 1];
             var cnt = PageIndex - span;
             var counter = 0;
-            while(cnt <= TotalPages)
+            while(cnt <= TotalPages && counter < pages.Length)
             {
                 if (cnt <= 0)
                 {
@@ -50,7 +50,7 @@ namespace Baldin.SebEJ.Gallery.Web.Models
                 cnt++;
                 counter++;
             }
-            return pages.Where(x => x != 0);
+            return pages.TakeWhile(x => x != 0);
         }
 
         public static PaginatedList<T> Create(IEnumerable<T> source, int pageIndex, int pageSize)
