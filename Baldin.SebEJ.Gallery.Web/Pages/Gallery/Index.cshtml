@@ -4,10 +4,17 @@
 @{
     ViewData["Title"] = "Gallery";
     var user = await userManager.GetUserAsync(User);
-    
+
 }
 
-<h1>Gallery</h1>
+<div class="row">
+    <div class="col-6">
+        <h1>Gallery</h1>
+    </div>
+    <div class="col-6 text-right">
+        <button class="btn btn-warning" onclick="writePagination(@Model.Pictures.PageIndex, @Model.Pictures.TotalPages)">Enable experimental client-side pagination</button>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-10">
@@ -42,88 +49,83 @@
 <div class="row" id="gallery">
     @foreach (var item in Model.Pictures)
     {
-    <div class="col-md-4 col-sm-6">
-        <div class="card" style="margin-bottom: 25px;">
-            <a asp-page="/Gallery/Photo" asp-route-photoId="@item.Id">
-                @if (!string.IsNullOrEmpty(item.Thumbnail_Url))
-                {
-                    <img class="card-img-top" style="height: 300px;" src="@item.Thumbnail_Url" alt="Card image cap">
-                }
-                else
-                {
-                    <img class="card-img-top" style="height: 300px;" src="@item.Url" alt="Card image cap">
-                }
-            </a>
-            <div class="card-body">
-                <!--<h5 class="card-title">title</h5>-->
-                <!--<p class="card-text">descr</p>-->
-                <div id="card_board_@item.Id">
-                    @if (!item.IsVoted && item.Author != user.Id)
+        <div class="col-md-4 col-sm-6">
+            <div class="card" style="margin-bottom: 25px;">
+                <a asp-page="/Gallery/Photo" asp-route-photoId="@item.Id">
+                    @if (!string.IsNullOrEmpty(item.Thumbnail_Url))
                     {
-                        <form>
-                            <div class="row">
-                                <div class="col">
-                                    <select name="vote" id="vote_@item.Id" class="form-control">
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
-
-                                <div class="col">
-                                    <button type="button" onclick="voteImage(@item.Id);" class="btn btn-primary btn-block">Vote</button>
-                                </div>
-                            </div>
-                        </form>
+                        <img class="card-img-top" style="height: 300px;" src="@item.Thumbnail_Url" alt="Card image cap">
                     }
                     else
                     {
-                        <div class="row">
-                            <div class="col-6">
-                                <i class="fas fa-star"></i> @item.Rating.ToString("0.#")
-                            </div>
-                            <div class="col-6">
-                                <i class="fas fa-poll"></i> @item.Votes
-                            </div>
-                        </div>
+                        <img class="card-img-top" style="height: 300px;" src="@item.Url" alt="Card image cap">
                     }
+                </a>
+                <div class="card-body">
+                    <!--<h5 class="card-title">title</h5>-->
+                    <!--<p class="card-text">descr</p>-->
+                    <div id="card_board_@item.Id">
+                        @if (!item.IsVoted && item.Author != user.Id)
+                        {
+                            <form>
+                                <div class="row">
+                                    <div class="col">
+                                        <select name="vote" id="vote_@item.Id" class="form-control">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col">
+                                        <button type="button" onclick="voteImage(@item.Id);" class="btn btn-primary btn-block">Vote</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-6">
+                                    <i class="fas fa-star"></i> @item.Rating.ToString("0.#")
+                                </div>
+                                <div class="col-6">
+                                    <i class="fas fa-poll"></i> @item.Votes
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-        }
+    }
 </div>
+<section id="pagination">
+    <nav aria-label="gallery pagination">
+        <ul class="pagination justify-content-center">
+            <li id="prevPage" class="page-item @(Model.Pictures.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex - 1)" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
 
-<nav aria-label="gallery pagination">
-    <ul class="pagination justify-content-center">
-        <li class="page-item @(Model.Pictures.HasPreviousPage ? "" : "disabled")">
-            <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex - 1)" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-            </a>
-        </li>
-        @*@for (int i = Model.Pictures.PageIndex - 2 - 1; i < Model.Pictures.PageIndex + 2 && i < Model.Pictures.TotalPages; i++)
-        {
-            if (i < 0)
+            @foreach (var index in Model.Pictures.GetRoutePages())
             {
-                continue;
+                <li class="page-item @(Model.Pictures.PageIndex == index ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(index)">@(index)</a></li>
             }
-            <li class="page-item @(Model.Pictures.PageIndex == i + 1 ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(i+1)">@(i+1)</a></li>
-        }*@
-        @foreach (var index in Model.Pictures.GetRoutePages())
-        {
-            <li class="page-item @(Model.Pictures.PageIndex == index ? "active" : "")"><a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(index)">@(index)</a></li>
-        }
-        <li class="page-item @(Model.Pictures.HasNextPage ? "" : "disabled")">
-            <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex + 1)" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+
+            <li id="nexPage" class="page-item @(Model.Pictures.HasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-page="/Gallery/Index" asp-route-index="@(Model.Pictures.PageIndex + 1)" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
 
 @section Scripts {
     <script src="~/js/gallery.js"></script>

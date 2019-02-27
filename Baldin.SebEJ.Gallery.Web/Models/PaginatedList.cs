@@ -50,7 +50,7 @@ namespace Baldin.SebEJ.Gallery.Web.Models
                 cnt++;
                 counter++;
             }
-            return pages.TakeWhile(x => x != 0);
+            return pages.Where(x => x != 0);
         }
 
         public static PaginatedList<T> Create(IEnumerable<T> source, int pageIndex, int pageSize)

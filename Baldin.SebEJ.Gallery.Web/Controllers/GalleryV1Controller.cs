@@ -126,9 +126,10 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             return null;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<User_Picture>> GetPaginatedPictures(int index)
+        [HttpGet("{index}")]
+        public async Task<IActionResult> GetPaginatedPictures(int index)
         {
+            IEnumerable<User_Picture> userPictures = null;
             var Pics = await _caching.GetPhotosByScoreAsync((index - 1) * 6, index * 6);
             if (Pics == null)
             {
@@ -137,7 +138,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             }
             if (Pics != null && !User.Identity.IsAuthenticated)
             {
-                return Pics.Select(elem => new User_Picture
+                userPictures = Pics.Select(elem => new User_Picture
                 {
                     Id = elem.Id,
                     Rating = elem.Rating,
@@ -160,7 +161,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 }
                 if (Pics != null && userPics != null)
                 {
-                    return Pics.Select(elem => new User_Picture
+                    userPictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -173,7 +174,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 }
                 else if (Pics != null)
                 {
-                    return Pics.Select(elem => new User_Picture
+                    userPictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -185,7 +186,11 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                     });
                 }
             }
-            return null;
+            var picCount = await _dataAccess.GetPictureCountAsync();
+            return Ok(new {
+                pageCount = (int)Math.Ceiling(picCount / 6D),
+                photos = userPictures
+            });
         }
     }
 }

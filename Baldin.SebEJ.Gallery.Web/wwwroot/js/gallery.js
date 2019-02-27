@@ -30,6 +30,26 @@ async function getPhotos() {
         });
 }
 
+async function getPaginatedPhotos(pageIndex) {
+    fetch(`/api/v1/gallery/${pageIndex}`, {
+        method: 'GET',
+        credentials: 'include'
+    })
+        .then(res => {
+            res.json()
+                .then(jsonRes => {
+                    writePagination(pageIndex, jsonRes.pageCount);
+                    writeCards(jsonRes.photos);
+                    history.pushState(null, 'Gallery' + pageIndex, `/Gallery/${pageIndex}`);
+                });
+        })
+        .catch(console.warn);
+}
+
+async function navigateToPage(index) {
+    getPaginatedPhotos(index);
+}
+
 function writeCards(fileList) {
     //gallery.empty();
     gallery.innerHTML = '';
@@ -41,6 +61,25 @@ function writeCards(fileList) {
         child.innerHTML = card;
         gallery.appendChild(child);
     });
+}
+
+function writePagination(pageIndex, pageNumber) {
+    let hasPrevious = pageIndex > 1;
+    let hasNext = pageIndex < pageNumber;
+
+    let pages = [];
+    let cnt = pageIndex - 2;
+    while (cnt <= pageNumber && cnt <= 5) {
+        if (cnt <= 0) {
+            cnt++;
+            continue;
+        }
+        pages.push(cnt);
+        cnt++;
+    }
+
+    let pageSection = document.getElementById('pagination');
+    pageSection.innerHTML = getPagination(pageIndex, hasPrevious, hasNext, pages);
 }
 
 async function voteImage(id) {
@@ -78,7 +117,9 @@ async function voteImage(id) {
 
 function getCard(img_url, id, title, descr, isVoted, average, votes) {
     let tmp = `<div class="card" style="margin-bottom: 25px;">
+<a href="/Gallery/Photo/${id}">
       <img class="card-img-top" style="height: 300px;" src="${img_url}" alt="Card image cap">
+</a>
       <div class="card-body">
             <!--<h5 class="card-title">${title}</h5>-->
             <!--<p class="card-text">${descr}</p>-->
@@ -120,6 +161,33 @@ function hasVoted(hasVoted, id, average, votes) {
                   </div>
             </div>`;
     }
+}
+
+function getPagination(current, hasPrev, hasNext, innerPages) {
+    let pagTemp = `<nav aria-label="gallery pagination">
+        <ul class="pagination justify-content-center">
+            <li id="prevPage" class="page-item ${hasPrev ? "" : "disabled"}">
+                <button class="page-link" onclick="navigateToPage(${current - 1});" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </button>
+            </li>`;
+
+    innerPages.forEach(index => {
+        pagTemp += `<li class="page-item ${index === current ? "active" : ""}"><button class="page-link" onclick="navigateToPage(${index});">${index}</button></li>`;
+    });
+            
+
+    pagTemp += `<li id="nexPage" class="page-item ${hasNext ? "" : "disabled"}">
+                <button class="page-link" onclick="navigateToPage(${(current*1)+1});" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </button>
+            </li>
+        </ul>
+    </nav>`;
+
+    return pagTemp;
 }
 
 
