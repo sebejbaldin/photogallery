@@ -169,7 +169,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         Url = elem.Url,
                         Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
-                        IsVoted = userPics.Any(item => item == elem.Id)
+                        IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
                     });
                 }
                 else if (Pics != null)
