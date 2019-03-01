@@ -30,6 +30,16 @@ async function getPhotos() {
         });
 }
 
+async function getCurrentPagePhotos() {
+    let currentUrl = location.pathname;
+    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/'));
+    let id = parseInt(currentUrl);
+    if (!id) {
+        id = 1;
+    }
+    getPaginatedPhotos(id);
+}
+
 async function getPaginatedPhotos(pageIndex) {
     fetch(`/api/v1/gallery/${pageIndex}`, {
         method: 'GET',
