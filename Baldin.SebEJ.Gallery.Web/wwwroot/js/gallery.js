@@ -32,7 +32,7 @@ async function getPhotos() {
 
 async function getCurrentPagePhotos() {
     let currentUrl = location.pathname;
-    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/'));
+    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
     let id = parseInt(currentUrl);
     if (!id) {
         id = 1;
