@@ -54,7 +54,7 @@ function writeCards(fileList) {
     //gallery.empty();
     gallery.innerHTML = '';
     fileList.forEach(item => {
-        let card = getCard(item.url, item.id, item.name, '', item.isVoted, item.rating, item.votes);
+        let card = getCard(item.thumbnail_Url ? item.thumbnail_Url : item.url, item.id, item.name, '', item.isVoted, item.rating, item.votes);
         //gallery.innerHTML = card;
         let child = document.createElement('div');
         child.setAttribute('class', 'col-md-4 col-sm-6');
