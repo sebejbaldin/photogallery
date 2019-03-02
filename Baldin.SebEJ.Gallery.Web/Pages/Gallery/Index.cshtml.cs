@@ -17,19 +17,19 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
     public class IndexModel : PageModel
     {
-        private IDataAccess dataAccess;
-        private IImageManager imageManager;
-        private IConfiguration configuration;
-        private ICaching caching;
-        private UserManager<IdentityUser> userManager;
+        private IDataAccess _dataAccess;
+        private IImageManager _imageManager;
+        private IConfiguration _configuration;
+        private ICaching _caching;
+        private UserManager<IdentityUser> _userManager;
 
         public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager, IConfiguration configuration, ICaching caching)
         {
-            this.dataAccess = dataAccess;
-            this.imageManager = imageManager;
-            this.userManager = userManager;
-            this.configuration = configuration;
-            this.caching = caching;
+            this._dataAccess = dataAccess;
+            this._imageManager = imageManager;
+            this._userManager = userManager;
+            this._configuration = configuration;
+            this._caching = caching;
         }
 
         [BindProperty]
@@ -39,12 +39,12 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         public async Task OnGet(int index = 1)
         {
             IEnumerable<User_Picture> user_Pictures = null;
-            var Pics = await caching.GetPhotosAsync();
+            var Pics = await _caching.GetPhotosAsync();
             if (Pics == null)
             {
-                Pics = await dataAccess.GetPicturesAsync();
+                Pics = await _dataAccess.GetPicturesAsync();
                 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                caching.InsertPhotosAsync(Pics);
+                _caching.InsertPhotosAsync(Pics);
                 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             if (Pics != null && !User.Identity.IsAuthenticated)
@@ -62,13 +62,13 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             }
             else
             {
-                var user = await userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = await caching.GetVotesByUserIdAsync(user.Id);
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
                 if (userPics == null || userPics.Count() == 0)
                 {
-                    var picsVoted = await dataAccess.GetVotesByUserIdAsync(user.Id);
+                    var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
                     #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    caching.InsertVotesAsync(picsVoted);
+                    _caching.InsertVotesAsync(picsVoted);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     userPics = picsVoted.Select(x => x.Picture_Id);
                 }
@@ -110,18 +110,18 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             {
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
                 var name = Guid.NewGuid().ToString() + fileExtension;
-                var user = await userManager.GetUserAsync(User);
+                var user = await _userManager.GetUserAsync(User);
                 var pic = new Picture
                 {
                     OriginalName = Photo.FileName,
-                    Url = $"{configuration["PhotoUrl"]}/{name}",
+                    Url = $"{_configuration["PhotoUrl"]}/{name}",
                     Name = name,
                     User_Id = user.Id
                 };
-                pic.Id = await dataAccess.InsertPictureAsync(pic);
+                pic.Id = await _dataAccess.InsertPictureAsync(pic);
                 pic.Thumbnail_Url = "";
-                await imageManager.SaveAsync(Photo.OpenReadStream(), name);
-                await caching.InsertPhotoAsync(pic);
+                await _imageManager.SaveAsync(Photo.OpenReadStream(), name);
+                await _caching.InsertPhotoAsync(pic);
             }
             return RedirectToPage("/Gallery/Index");
         }
