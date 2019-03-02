@@ -59,11 +59,18 @@ async function getPaginatedPhotos(pageIndex) {
     return data;
 }
 
+window.onpopstate = async (event) => {
+    let index = event.state ? event.state : 1;
+    let data = await getPaginatedPhotos(index);
+    writeCards(data.photos);
+    writePagination(data.pageIndex, data.pageCount);
+};
+
 async function navigateToPage(index) {
     let data = await getPaginatedPhotos(index);
     writePagination(data.pageIndex, data.pageCount);
     writeCards(data.photos);
-    history.pushState(null, 'Gallery ' + index, `/Gallery/${index}`);
+    history.pushState(index, 'Gallery ' + index, `/Gallery/${index}`);
 }
 
 function writeCards(fileList) {
