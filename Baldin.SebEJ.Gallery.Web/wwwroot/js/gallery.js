@@ -37,27 +37,33 @@ async function getCurrentPagePhotos() {
     if (!id) {
         id = 1;
     }
-    getPaginatedPhotos(id);
+    let data = await getPaginatedPhotos(id);
+
+    writeCards(data.photos);
 }
 
 async function getPaginatedPhotos(pageIndex) {
-    fetch(`/api/v1/gallery/${pageIndex}`, {
+    let data = await fetch(`/api/v1/gallery/${pageIndex}`, {
         method: 'GET',
         credentials: 'include'
     })
-        .then(res => {
-            res.json()
-                .then(jsonRes => {
-                    writePagination(pageIndex, jsonRes.pageCount);
-                    writeCards(jsonRes.photos);
-                    history.pushState(null, 'Gallery' + pageIndex, `/Gallery/${pageIndex}`);
-                });
-        })
-        .catch(console.warn);
+    .then((res) => {
+        if (res.ok)
+            return res.json();
+    })
+    .catch(console.warn)
+    .then((json) => {
+        return json;
+    });
+    data.pageIndex = pageIndex;
+    return data;
 }
 
 async function navigateToPage(index) {
-    getPaginatedPhotos(index);
+    let data = await getPaginatedPhotos(index);
+    writePagination(data.pageIndex, data.pageCount);
+    writeCards(data.photos);
+    history.pushState(null, 'Gallery ' + pageIndex, `/Gallery/${pageIndex}`);
 }
 
 function writeCards(fileList) {
