@@ -63,7 +63,7 @@ async function navigateToPage(index) {
     let data = await getPaginatedPhotos(index);
     writePagination(data.pageIndex, data.pageCount);
     writeCards(data.photos);
-    history.pushState(null, 'Gallery ' + pageIndex, `/Gallery/${pageIndex}`);
+    history.pushState(null, 'Gallery ' + index, `/Gallery/${index}`);
 }
 
 function writeCards(fileList) {
