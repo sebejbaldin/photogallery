@@ -53,7 +53,8 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                     pic = await _dataAccess.GetPictureAsync(vote.Picture_Id);
 
                 _caching.UpdatePictureAsync(pic);
-                return Ok(new {
+                return Ok(new
+                {
                     average = pic.Rating,
                     count = pic.Votes
                 });
@@ -136,61 +137,66 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 Pics = await _dataAccess.GetPaginatedPicturesAsync(index, 6);
                 _caching.InsertPhotosAsync(Pics);
             }
-            if (Pics != null && !User.Identity.IsAuthenticated)
+            if (Pics != null)
             {
-                userPictures = Pics.Select(elem => new User_Picture
+                if (!User.Identity.IsAuthenticated)
                 {
-                    Id = elem.Id,
-                    Rating = elem.Rating,
-                    Votes = elem.Votes,
-                    Url = elem.Url,
-                    Thumbnail_Url = elem.Thumbnail_Url,
-                    Author = elem.User_Id,
-                    IsVoted = true
+                    userPictures = Pics.Select(elem => new User_Picture
+                    {
+                        Id = elem.Id,
+                        Rating = elem.Rating,
+                        Votes = elem.Votes,
+                        Url = elem.Url,
+                        Thumbnail_Url = elem.Thumbnail_Url,
+                        Author = elem.User_Id,
+                        IsVoted = true
+                    });
+                }
+                else
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    if (userPics == null || userPics.Count() == 0)
+                    {
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        _caching.InsertVotesAsync(picsVoted);
+                        userPics = picsVoted.Select(x => x.Picture_Id);
+                    }
+                    if (userPics != null)
+                    {
+                        userPictures = Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
+                        });
+                    }
+                    else
+                    {
+                        userPictures = Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == user.Id
+                        });
+                    }
+                }
+                var picCount = await _dataAccess.GetPictureCountAsync();
+                return Ok(new
+                {
+                    pageCount = (int)Math.Ceiling(picCount / 6D),
+                    photos = userPictures
                 });
             }
-            else
-            {
-                var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
-                if (userPics == null || userPics.Count() == 0)
-                {
-                    var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
-                    _caching.InsertVotesAsync(picsVoted);
-                    userPics = picsVoted.Select(x => x.Picture_Id);
-                }
-                if (Pics != null && userPics != null)
-                {
-                    userPictures = Pics.Select(elem => new User_Picture
-                    {
-                        Id = elem.Id,
-                        Rating = elem.Rating,
-                        Votes = elem.Votes,
-                        Url = elem.Url,
-                        Thumbnail_Url = elem.Thumbnail_Url,
-                        Author = elem.User_Id,
-                        IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
-                    });
-                }
-                else if (Pics != null)
-                {
-                    userPictures = Pics.Select(elem => new User_Picture
-                    {
-                        Id = elem.Id,
-                        Rating = elem.Rating,
-                        Votes = elem.Votes,
-                        Url = elem.Url,
-                        Thumbnail_Url = elem.Thumbnail_Url,
-                        Author = elem.User_Id,
-                        IsVoted = false
-                    });
-                }
-            }
-            var picCount = await _dataAccess.GetPictureCountAsync();
-            return Ok(new {
-                pageCount = (int)Math.Ceiling(picCount / 6D),
-                photos = userPictures
-            });
+            return Ok("No data found");
         }
     }
 }
