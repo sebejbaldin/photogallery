@@ -1,10 +1,7 @@
 ﻿@page "{index?}"
 @model Baldin.SebEJ.Gallery.Web.Pages.Gallery.IndexModel
-@inject UserManager<IdentityUser> userManager
 @{
     ViewData["Title"] = "Gallery";
-    var user = await userManager.GetUserAsync(User);
-
 }
 
 <div class="row">
@@ -65,7 +62,7 @@
                     <!--<h5 class="card-title">title</h5>-->
                     <!--<p class="card-text">descr</p>-->
                     <div id="card_board_@item.Id">
-                        @if (!item.IsVoted && item.Author != user.Id)
+                        @if (!item.IsVoted)
                         {
                             <form>
                                 <div class="row">
