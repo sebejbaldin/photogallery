@@ -386,6 +386,46 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public IEnumerable<Picture> GetRank(int topN = 3)
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               WHERE votes != 0
+                               ORDER BY total_rating::decimal / votes * 100 + votes DESC
+                               LIMIT @top";
+                return conn.Query<Picture>(sql, new { top = topN });
+            }
+        }
+
+        public async Task<IEnumerable<Picture>> GetRankAsync(int topN = 3)
+        {
+            using (var conn = new NpgsqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT id AS Id
+                               ,original_name AS OriginalName
+                               ,user_id AS User_Id
+                               ,name AS Name
+                               ,thumbnail_url AS Thumbnail_Url
+                               ,url AS Url
+                               ,votes AS Votes
+                               ,total_rating AS Total_Rating
+                               FROM sebej_pictures
+                               WHERE votes != 0
+                               ORDER BY total_rating::decimal / votes * 100 + votes DESC
+                               LIMIT @top";
+                return await conn.QueryAsync<Picture>(sql, new { top = topN });
+            }
+        }
+
         public IEnumerable<Vote> GetVotes()
         {
             using (var conn = new NpgsqlConnection(ConnectionString))

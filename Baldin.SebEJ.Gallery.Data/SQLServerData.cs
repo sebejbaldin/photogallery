@@ -286,6 +286,30 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
+        public IEnumerable<Picture> GetRank(int topN = 3)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT TOP @top *
+                                FROM [dbo].[Pictures]
+                                WHERE Votes != 0
+                                ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
+                return conn.Query<Picture>(sql, new { top = topN });
+            }
+        }
+
+        public async Task<IEnumerable<Picture>> GetRankAsync(int topN = 3)
+        {
+            using (var conn = new SqlConnection(ConnectionString))
+            {
+                string sql = @"SELECT TOP @top *
+                                FROM [dbo].[Pictures]
+                                WHERE Votes != 0
+                                ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
+                return await conn.QueryAsync<Picture>(sql, new { top = topN });
+            }
+        }
+
         public IEnumerable<Vote> GetVotes()
         {
             using (var conn = new SqlConnection(ConnectionString))

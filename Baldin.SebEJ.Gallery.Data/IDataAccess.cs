@@ -16,6 +16,7 @@ namespace Baldin.SebEJ.Gallery.Data
         IEnumerable<Picture> GetPicturesRangeById(int startId, int endId);
         IEnumerable<Picture> GetPaginatedPictures(int index, int pageCount);
         IEnumerable<Picture> GetPictures();
+        IEnumerable<Picture> GetRank(int topN = 3);
         int InsertPicture(Picture picture);
         bool UpdatePicture(Picture picture);
         bool DeletePicture(int Id);
@@ -38,6 +39,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Task<IEnumerable<Picture>> GetPicturesRangeByIdAsync(int startId, int endId);
         Task<IEnumerable<Picture>> GetPaginatedPicturesAsync(int index, int pageCount);
         Task<IEnumerable<Picture>> GetPicturesAsync();
+        Task<IEnumerable<Picture>> GetRankAsync(int topN = 3);
         Task<int> InsertPictureAsync(Picture picture);
         Task<bool> UpdatePictureAsync(Picture picture);
         Task<bool> DeletePictureAsync(int Id);
