@@ -38,43 +38,18 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 
         public async Task OnGet(int index = 1)
         {
-            IEnumerable<User_Picture> user_Pictures = null;
-            var Pics = await _caching.GetPhotosAsync();
+            IEnumerable<User_Picture> userPictures = null;
+            var Pics = await _caching.GetPhotosByScoreAsync((index - 1) * 6, index * 6);
             if (Pics == null)
             {
-                Pics = await _dataAccess.GetPicturesAsync();
-                #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Pics = await _dataAccess.GetPaginatedPicturesAsync(index, 6);
                 _caching.InsertPhotosAsync(Pics);
-                #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
-            if (Pics != null && !User.Identity.IsAuthenticated)
+            if (Pics != null)
             {
-                user_Pictures = Pics.Select(elem => new User_Picture
+                if (!User.Identity.IsAuthenticated)
                 {
-                    Id = elem.Id,
-                    Rating = elem.Rating,
-                    Votes = elem.Votes,
-                    Url = elem.Url,
-                    Thumbnail_Url = elem.Thumbnail_Url,
-                    Author = elem.User_Id,
-                    IsVoted = true
-                });
-            }
-            else
-            {
-                var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
-                if (userPics == null || userPics.Count() == 0)
-                {
-                    var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
-                    #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    _caching.InsertVotesAsync(picsVoted);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    userPics = picsVoted.Select(x => x.Picture_Id);
-                }
-                if (Pics != null && userPics != null)
-                {
-                    user_Pictures = Pics.Select(elem => new User_Picture
+                    userPictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -82,24 +57,49 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                         Url = elem.Url,
                         Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
-                        IsVoted = userPics.Any(item => item == elem.Id)
-                    }).ToList();
-                }
-                else if (Pics != null)
-                {
-                    user_Pictures = Pics.Select(elem => new User_Picture
-                    {
-                        Id = elem.Id,
-                        Rating = elem.Rating,
-                        Votes = elem.Votes,
-                        Url = elem.Url,
-                        Thumbnail_Url = elem.Thumbnail_Url,
-                        Author = elem.User_Id,
-                        IsVoted = false
+                        IsVoted = true
                     });
                 }
+                else
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    if (userPics == null || userPics.Count() == 0)
+                    {
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        _caching.InsertVotesAsync(picsVoted);
+                        userPics = picsVoted.Select(x => x.Picture_Id);
+                    }
+                    if (userPics != null)
+                    {
+                        userPictures = Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
+                        });
+                    }
+                    else
+                    {
+                        userPictures = Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == user.Id
+                        });
+                    }
+                }
             }
-            Pictures = PaginatedList<User_Picture>.Create(user_Pictures.OrderBy(x => x.Id), index, 6);
+            var picCount = await _dataAccess.GetPictureCountAsync();
+            Pictures = new PaginatedList<User_Picture>(userPictures, (int)picCount, index, 6);
         }
 
         public async Task<IActionResult> OnPost()
