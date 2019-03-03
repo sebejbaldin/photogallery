@@ -22,12 +22,14 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         }
 
         public Picture Picture { get; set; }
+        public string AuthorEmail { get; set; }
         public IEnumerable<Comment> Comments { get; set; }
 
         public async Task OnGet(int photoId)
         {
             Picture = await _dataAccess.GetPictureAsync(photoId);
             Comments = await _dataAccess.GetCommentsByPhotoIdAsync(photoId);
+            AuthorEmail = (await _userManager.FindByIdAsync(Picture.User_Id)).Email;
         }
     }
 }
