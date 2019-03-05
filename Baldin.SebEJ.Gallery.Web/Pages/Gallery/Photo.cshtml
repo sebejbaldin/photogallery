@@ -4,19 +4,19 @@
     ViewData["Title"] = "Photo";
 }
 
-<h1>Photo</h1>
+<h1>@(Model.Picture.OriginalName ?? "Photo")</h1>
 
 <div class="row">
     <div class="col-md-9">
         <img class="img-fluid rounded" style="max-height: 500px;" src="@Model.Picture.Url" alt="Uploaded Image" />
     </div>
     <div class="col-md-3">
-        <h4>Info</h4>
+        <h3>Info</h3>
         <input type="hidden" value="@Model.Picture.Id" id="postId" />
         @*<p>Name: @Model.Picture.Name</p>*@
-        <p>Votes: @Model.Picture.Votes</p>
-        <p>Rating: @Model.Picture.Rating.ToString("0.#")</p>
-        <p>Uploaded by: @Model.AuthorEmail</p>
+        <p>Votes: @Model.Picture.Votes <i class="fas fa-poll"></i></p>
+        <p>Rating: @Model.Picture.Rating.ToString("0.#") <i class="fas fa-star"></i></p>
+        <p>Uploaded by: <strong>@Model.AuthorEmail</strong></p>
     </div>
 </div>
 
