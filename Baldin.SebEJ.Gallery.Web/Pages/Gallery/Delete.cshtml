@@ -1,0 +1,26 @@
+﻿@page "{photoId}"
+@model Baldin.SebEJ.Gallery.Web.Pages.Gallery.DeleteModel
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<div class="row">
+    <div class="col-sm-4">
+        <p>Are you sure to delete this photo?</p>
+        <p>Think about it, this photo liked to @Model.Picture.Votes people and has an average score of @Model.Picture.Rating<i class="fas fa-star"></i>. You're making all these people sad!</p>
+        @if (!string.IsNullOrEmpty(Model.Picture.OriginalName))
+        {
+            <p>Name: @Model.Picture.OriginalName</p>
+        }
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" value="@Model.Picture.Id" name="photoId" />
+                <button class="btn btn-danger" type="submit">I understand the consequences, please delete it.</button>
+            </form>
+    </div>
+    <div class="col-sm-8">
+        <img src="@Model.Picture.Url" class="img-fluid rounded" />
+    </div>
+</div>

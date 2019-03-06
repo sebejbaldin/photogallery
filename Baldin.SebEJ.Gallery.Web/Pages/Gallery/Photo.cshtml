@@ -16,6 +16,10 @@
         <p>Votes: @Model.Picture.Votes <i class="fas fa-poll"></i></p>
         <p>Rating: @Model.Picture.Rating.ToString("0.#") <i class="fas fa-star"></i></p>
         <p>Uploaded by: <strong>@Model.AuthorEmail</strong></p>
+        @if (Model.IsAuthor)
+        {
+            <a asp-page="/Gallery/Delete" asp-route-photoId="@Model.Picture.Id" class="btn btn-danger">Delete</a>
+        }
     </div>
 </div>
 

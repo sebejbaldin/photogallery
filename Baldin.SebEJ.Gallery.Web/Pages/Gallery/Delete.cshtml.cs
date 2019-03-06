@@ -4,39 +4,40 @@ using System.Linq;
 using System.Threading.Tasks;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
-    public class PhotoModel : PageModel
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public class DeleteModel : PageModel
     {
         private IDataAccess _dataAccess;
         private UserManager<IdentityUser> _userManager;
 
-        public PhotoModel(IDataAccess dataAccess, UserManager<IdentityUser> userManager)
+        public DeleteModel(IDataAccess dataAccess, UserManager<IdentityUser> userManager)
         {
             _dataAccess = dataAccess;
             _userManager = userManager;
         }
 
         public Picture Picture { get; set; }
-        public string AuthorEmail { get; set; }
-        public bool IsAuthor { get; set; }
-        public IEnumerable<Comment> Comments { get; set; }
 
         public async Task OnGet(int photoId)
         {
             Picture = await _dataAccess.GetPictureAsync(photoId);
+        }
 
-            if (User.Identity.IsAuthenticated && (await _userManager.GetUserAsync(User)).Id == Picture.User_Id)
-                IsAuthor = true;
-            else
-                IsAuthor = false;
-            Comments = await _dataAccess.GetCommentsByPhotoIdAsync(photoId);
-            var author = await _userManager.FindByIdAsync(Picture.User_Id);
-            AuthorEmail = author.Email;
+        public async Task<IActionResult> OnPost(int photoId)
+        {
+            var pic = await _dataAccess.GetPictureAsync(photoId);
+            var user = await _userManager.GetUserAsync(User);
+            if (user.Id == pic.User_Id)
+                await _dataAccess.DeletePictureAsync(photoId);
+            return RedirectToPage("/Gallery/Index");
         }
     }
 }
