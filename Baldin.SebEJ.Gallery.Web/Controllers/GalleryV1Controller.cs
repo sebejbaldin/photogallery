@@ -19,14 +19,12 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
     public class GalleryV1Controller : ControllerBase
     {
         private IDataAccess _dataAccess;
-        private UserManager<IdentityUser> _userManager;
         private ICaching _caching;
         private ISearch _search;
 
-        public GalleryV1Controller(IDataAccess dataAccess, UserManager<IdentityUser> userManager, ICaching caching, ISearch search)
+        public GalleryV1Controller(IDataAccess dataAccess, ICaching caching, ISearch search)
         {
             _dataAccess = dataAccess;
-            _userManager = userManager;
             _caching = caching;
             _search = search;
         }
@@ -37,8 +35,8 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         {
             if (vote.Rating > 5 || vote.Rating < 0)
                 return ValidationProblem();
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            vote.User_Id = user.Id;
+            var userId = User.FindFirst("userId");
+            vote.User_Id = userId.Value;
             var result = await _dataAccess.InsertVoteAsync(vote);
             if (result)
             {
@@ -68,38 +66,18 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         [HttpGet]
         public async Task<IEnumerable<User_Picture>> GetPictures()
         {
+            IEnumerable<User_Picture> user_Pictures = null;
             var Pics = await _caching.GetPhotosAsync();
             if (Pics == null)
             {
                 Pics = await _dataAccess.GetPicturesAsync();
                 _caching.InsertPhotosAsync(Pics);
             }
-            if (Pics != null && !User.Identity.IsAuthenticated)
+            if (Pics != null)
             {
-                return Pics.Select(elem => new User_Picture
+                if (!User.Identity.IsAuthenticated)
                 {
-                    Id = elem.Id,
-                    Rating = elem.Rating,
-                    Votes = elem.Votes,
-                    Url = elem.Url,
-                    Thumbnail_Url = elem.Thumbnail_Url,
-                    Author = elem.User_Id,
-                    IsVoted = true
-                });
-            }
-            else
-            {
-                var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
-                if (userPics == null || userPics.Count() == 0)
-                {
-                    var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
-                    _caching.InsertVotesAsync(picsVoted);
-                    userPics = picsVoted.Select(x => x.Picture_Id);
-                }
-                if (Pics != null && userPics != null)
-                {
-                    return Pics.Select(elem => new User_Picture
+                    user_Pictures = Pics.Select(elem => new User_Picture
                     {
                         Id = elem.Id,
                         Rating = elem.Rating,
@@ -107,24 +85,48 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         Url = elem.Url,
                         Thumbnail_Url = elem.Thumbnail_Url,
                         Author = elem.User_Id,
-                        IsVoted = userPics.Any(item => item == elem.Id)
+                        IsVoted = true
                     });
                 }
-                else if (Pics != null)
+                else
                 {
-                    return Pics.Select(elem => new User_Picture
+                    var userId = User.FindFirst("userId");
+                    var userPics = await _caching.GetVotesByUserIdAsync(userId.Value);
+                    if (userPics == null || userPics.Count() == 0)
                     {
-                        Id = elem.Id,
-                        Rating = elem.Rating,
-                        Votes = elem.Votes,
-                        Url = elem.Url,
-                        Thumbnail_Url = elem.Thumbnail_Url,
-                        Author = elem.User_Id,
-                        IsVoted = false
-                    });
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(userId.Value);
+                        _caching.InsertVotesAsync(picsVoted);
+                        userPics = picsVoted.Select(x => x.Picture_Id);
+                    }
+                    if (userPics != null)
+                    {
+                        return Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == userId.Value || userPics.Any(item => item == elem.Id)
+                        });
+                    }
+                    else
+                    {
+                        return Pics.Select(elem => new User_Picture
+                        {
+                            Id = elem.Id,
+                            Rating = elem.Rating,
+                            Votes = elem.Votes,
+                            Url = elem.Url,
+                            Thumbnail_Url = elem.Thumbnail_Url,
+                            Author = elem.User_Id,
+                            IsVoted = elem.User_Id == userId.Value
+                        });
+                    }
                 }
             }
-            return null;
+            return user_Pictures;
         }
 
         [HttpGet("{index}")]
@@ -154,11 +156,11 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 }
                 else
                 {
-                    var user = await _userManager.GetUserAsync(User);
-                    var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    var userId = User.FindFirst("userId");
+                    var userPics = await _caching.GetVotesByUserIdAsync(userId.Value);
                     if (userPics == null || userPics.Count() == 0)
                     {
-                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(userId.Value);
                         _caching.InsertVotesAsync(picsVoted);
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
@@ -172,7 +174,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                             Url = elem.Url,
                             Thumbnail_Url = elem.Thumbnail_Url,
                             Author = elem.User_Id,
-                            IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
+                            IsVoted = elem.User_Id == userId.Value || userPics.Any(item => item == elem.Id)
                         });
                     }
                     else
@@ -185,7 +187,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                             Url = elem.Url,
                             Thumbnail_Url = elem.Thumbnail_Url,
                             Author = elem.User_Id,
-                            IsVoted = elem.User_Id == user.Id
+                            IsVoted = elem.User_Id == userId.Value
                         });
                     }
                 }

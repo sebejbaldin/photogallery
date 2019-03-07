@@ -41,11 +41,11 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
 
                 if (User.Identity.IsAuthenticated)
                 {
-                    var user = await _userManager.FindByNameAsync(User.Identity.Name);
-                    userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    var userId = User.FindFirst("userId");
+                    userPics = await _caching.GetVotesByUserIdAsync(userId.Value);
                     if (userPics == null || userPics.Count() == 0)
                     {
-                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(userId.Value);
                         _caching.InsertVotesAsync(picsVoted);
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }

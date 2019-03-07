@@ -21,13 +21,11 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         private IImageManager _imageManager;
         private IConfiguration _configuration;
         private ICaching _caching;
-        private UserManager<IdentityUser> _userManager;
 
-        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, UserManager<IdentityUser> userManager, IConfiguration configuration, ICaching caching)
+        public IndexModel(IDataAccess dataAccess, IImageManager imageManager, IConfiguration configuration, ICaching caching)
         {
             this._dataAccess = dataAccess;
             this._imageManager = imageManager;
-            this._userManager = userManager;
             this._configuration = configuration;
             this._caching = caching;
         }
@@ -62,11 +60,11 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 }
                 else
                 {
-                    var user = await _userManager.GetUserAsync(User);
-                    var userPics = await _caching.GetVotesByUserIdAsync(user.Id);
+                    var userId = User.FindFirst("userId");
+                    var userPics = await _caching.GetVotesByUserIdAsync(userId.Value);
                     if (userPics == null || userPics.Count() == 0)
                     {
-                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(user.Id);
+                        var picsVoted = await _dataAccess.GetVotesByUserIdAsync(userId.Value);
                         _caching.InsertVotesAsync(picsVoted);
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
@@ -80,7 +78,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                             Url = elem.Url,
                             Thumbnail_Url = elem.Thumbnail_Url,
                             Author = elem.User_Id,
-                            IsVoted = elem.User_Id == user.Id || userPics.Any(item => item == elem.Id)
+                            IsVoted = elem.User_Id == userId.Value || userPics.Any(item => item == elem.Id)
                         });
                     }
                     else
@@ -93,7 +91,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                             Url = elem.Url,
                             Thumbnail_Url = elem.Thumbnail_Url,
                             Author = elem.User_Id,
-                            IsVoted = elem.User_Id == user.Id
+                            IsVoted = elem.User_Id == userId.Value
                         });
                     }
                 }
@@ -110,13 +108,13 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             {
                 var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
                 var name = Guid.NewGuid().ToString() + fileExtension;
-                var user = await _userManager.GetUserAsync(User);
+                var userId = User.FindFirst("userId");
                 var pic = new Picture
                 {
                     OriginalName = Photo.FileName,
                     Url = $"{_configuration["PhotoUrl"]}/{name}",
                     Name = name,
-                    User_Id = user.Id
+                    User_Id = userId.Value
                 };
                 pic.Id = await _dataAccess.InsertPictureAsync(pic);
                 pic.Thumbnail_Url = "";

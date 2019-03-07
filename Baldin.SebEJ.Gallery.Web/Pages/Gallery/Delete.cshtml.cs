@@ -34,8 +34,8 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         public async Task<IActionResult> OnPost(int photoId)
         {
             var pic = await _dataAccess.GetPictureAsync(photoId);
-            var user = await _userManager.GetUserAsync(User);
-            if (user.Id == pic.User_Id)
+            var userId = User.FindFirst("userId");
+            if (userId.Value == pic.User_Id)
                 await _dataAccess.DeletePictureAsync(photoId);
             return RedirectToPage("/Gallery/Index");
         }

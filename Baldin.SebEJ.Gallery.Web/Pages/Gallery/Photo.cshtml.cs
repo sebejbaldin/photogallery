@@ -30,7 +30,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         {
             Picture = await _dataAccess.GetPictureAsync(photoId);
 
-            if (User.Identity.IsAuthenticated && (await _userManager.GetUserAsync(User)).Id == Picture.User_Id)
+            if (User.Identity.IsAuthenticated && User.FindFirst("userId").Value == Picture.User_Id)
                 IsAuthor = true;
             else
                 IsAuthor = false;

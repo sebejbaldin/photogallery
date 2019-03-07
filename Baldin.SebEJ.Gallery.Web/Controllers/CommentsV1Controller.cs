@@ -30,8 +30,8 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         {
             if (comment.Email != User.Identity.Name)
                 return ValidationProblem();
-            var user = await _userManager.FindByEmailAsync(comment.Email);
-            comment.Author = user.Id;
+            var userId = User.FindFirst("userId");
+            comment.Author = userId.Value;
             comment.InsertDate = DateTime.UtcNow;
             var id = await _dataAccess.InsertCommentAsync(comment);
             return Ok(id);
