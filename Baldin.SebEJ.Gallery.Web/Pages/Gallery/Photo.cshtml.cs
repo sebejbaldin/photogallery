@@ -29,14 +29,19 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         public async Task OnGet(int photoId)
         {
             Picture = await _dataAccess.GetPictureAsync(photoId);
-
+            IdentityUser author = null;
             if (User.Identity.IsAuthenticated && User.FindFirst("userId").Value == Picture.User_Id)
+            {
+                AuthorEmail = User.Identity.Name;
                 IsAuthor = true;
+            }
             else
+            {
+                author = await _userManager.FindByIdAsync(Picture.User_Id);
                 IsAuthor = false;
+                AuthorEmail = author.Email;
+            }
             Comments = await _dataAccess.GetCommentsByPhotoIdAsync(photoId);
-            var author = await _userManager.FindByIdAsync(Picture.User_Id);
-            AuthorEmail = author.Email;
         }
     }
 }
