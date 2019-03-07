@@ -19,7 +19,7 @@ namespace Baldin.SebEJ.Gallery.Web.Data
         {
             var principal = await base.CreateAsync(user);
 
-            ((ClaimsIdentity)principal.Identity).AddClaim(new Claim("UserId", user.Id));
+            ((ClaimsIdentity)principal.Identity).AddClaim(new Claim("userId", user.Id));
 
             return principal;
         }
