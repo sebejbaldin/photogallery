@@ -54,7 +54,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         Url = item.Data.Url,
                         Author = item.User.UserId,
                         Votes = item.Data.Votes,
-                        IsVoted = userPics.Any(vote => vote == item.PhotoId)
+                        IsVoted = userId.Value == item.User.UserId || userPics.Any(vote => vote == item.PhotoId)
                     });
                 }
                 else
