@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Baldin.SebEJ.Gallery.Caching;
+using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Data.Models;
 using Baldin.SebEJ.Gallery.Search;
 using Baldin.SebEJ.Gallery.Search.Models;
@@ -14,36 +16,63 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
 {
     public class SearchModel : PageModel
     {
+        private IDataAccess _dataAccess;
         private ISearch _search;
-        private UserManager<IdentityUser> _userManager;
+        private ICaching _caching;
 
-        public SearchModel(ISearch search, UserManager<IdentityUser> userManager)
+        public SearchModel(IDataAccess dataAccess, ISearch search, ICaching caching)
         {
+            _dataAccess = dataAccess;
             _search = search;
-            _userManager = userManager;
+            _caching = caching;
         }
 
         public IEnumerable<User_Picture> Photos { get; set; }
 
         public async Task OnGet(string query = null)
         {
-            var list = new List<User_Picture>();
+            IEnumerable<User_Picture> list = new User_Picture[0];
             if (query != null)
             {
-                var res = await _search.SearchPhotosAsync(query);
-                foreach (var item in res)
+                var result = await _search.SearchPhotosAsync(query);
+                IEnumerable<int> userPics = new int[0];
+
+                if (result != null && result.Count() > 0)
                 {
-                    var userData = await _userManager.FindByEmailAsync(item.User.Email);
-                    list.Add(new User_Picture
+                    if (User.Identity.IsAuthenticated)
                     {
-                        Id = item.PhotoId,
-                        Rating = item.Data.Rating,
-                        Thumbnail_Url = item.Data.Thumbnail_Url,
-                        Url = item.Data.Url,
-                        Author = userData.Id,
-                        Votes = item.Data.Votes,
-                        IsVoted = true
-                    });
+                        var userId = User.FindFirst("userId");
+                        userPics = await _caching.GetVotesByUserIdAsync(userId.Value);
+                        if (userPics == null || userPics.Count() == 0)
+                        {
+                            var picsVoted = await _dataAccess.GetVotesByUserIdAsync(userId.Value);
+                            _caching.InsertVotesAsync(picsVoted);
+                            userPics = picsVoted.Select(x => x.Picture_Id);
+                        }
+                        list = result.Select(item => new User_Picture
+                        {
+                            Id = item.PhotoId,
+                            Rating = item.Data.Rating,
+                            Thumbnail_Url = item.Data.Thumbnail_Url,
+                            Url = item.Data.Url,
+                            Author = item.User.UserId,
+                            Votes = item.Data.Votes,
+                            IsVoted = userId.Value == item.User.UserId || userPics.Any(vote => vote == item.PhotoId)
+                        });
+                    }
+                    else
+                    {
+                        list = result.Select(item => new User_Picture
+                        {
+                            Id = item.PhotoId,
+                            Rating = item.Data.Rating,
+                            Thumbnail_Url = item.Data.Thumbnail_Url,
+                            Url = item.Data.Url,
+                            Author = item.User.UserId,
+                            Votes = item.Data.Votes,
+                            IsVoted = true
+                        });
+                    }
                 }
             }
             Photos = list;
