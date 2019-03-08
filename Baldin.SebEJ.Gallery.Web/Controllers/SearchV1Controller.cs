@@ -17,14 +17,12 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
     public class SearchV1Controller : ControllerBase
     {
         private IDataAccess _dataAccess;
-        private UserManager<IdentityUser> _userManager;
         private ICaching _caching;
         private ISearch _search;
 
-        public SearchV1Controller(IDataAccess dataAccess, UserManager<IdentityUser> userManager, ICaching caching, ISearch search)
+        public SearchV1Controller(IDataAccess dataAccess, ICaching caching, ISearch search)
         {
             _dataAccess = dataAccess;
-            _userManager = userManager;
             _caching = caching;
             _search = search;
         }
