@@ -107,14 +107,15 @@ namespace Baldin.SebEJ.Gallery.Web
             var esData = new List<ES_DN_Photo>();
             foreach (var group in data)
             {
-                string email = userManager.FindByIdAsync(group.Key).Result.Email;
+                var user = userManager.FindByIdAsync(group.Key).Result;
 
                 esData.AddRange(group.Select(e => new ES_DN_Photo {
                     PhotoId = e.Id,
                     User = new ES_DN_User
                     {
-                        Email = email,
-                        UserName = email
+                        UserId = user.Id,
+                        Email = user.Email,
+                        UserName = user.Email
                     },
                     Data = new ES_DN_Data
                     {
