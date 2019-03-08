@@ -29,16 +29,15 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             _search = search;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<User_Picture>> Search(string query)
+        [HttpGet("{index}")]
+        public async Task<IActionResult> PaginatedSearch(int index, string query)
         {
-            var result = await _search.SearchPhotosAsync(query);
-            var tosend = new List<User_Picture>();
+            var result = await _search.SearchPhotosAsync(query, index);
+            IEnumerable<User_Picture> tosend = null;
             IEnumerable<int> userPics = new int[0];
 
             if (result != null && result.Count() > 0)
             {
-
                 if (User.Identity.IsAuthenticated)
                 {
                     var userId = User.FindFirst("userId");
@@ -49,26 +48,37 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         _caching.InsertVotesAsync(picsVoted);
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
-                }
-
-                foreach (var item in result)
-                {
-                    var userData = await _userManager.FindByEmailAsync(item.User.Email);
-                    tosend.Add(new User_Picture
+                    tosend = result.Select(item => new User_Picture
                     {
                         Id = item.PhotoId,
                         Rating = item.Data.Rating,
                         Thumbnail_Url = item.Data.Thumbnail_Url,
                         Url = item.Data.Url,
-                        Author = userData.Id,
+                        Author = item.User.UserId,
                         Votes = item.Data.Votes,
                         IsVoted = userPics.Any(vote => vote == item.PhotoId)
                     });
                 }
-
+                else
+                {
+                    tosend = result.Select(item => new User_Picture
+                    {
+                        Id = item.PhotoId,
+                        Rating = item.Data.Rating,
+                        Thumbnail_Url = item.Data.Thumbnail_Url,
+                        Url = item.Data.Url,
+                        Author = item.User.UserId,
+                        Votes = item.Data.Votes,
+                        IsVoted = true
+                    });
+                }
             }
-
-            return tosend;
+            var picCount = await _dataAccess.GetPictureCountAsync();
+            return Ok(new
+            {
+                pageCount = (int)Math.Ceiling(picCount / 6D),
+                photos = tosend
+            });
         }
     }
 }
