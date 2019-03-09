@@ -50,6 +50,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 else
                     pic = await _dataAccess.GetPictureAsync(vote.Picture_Id);
 
+                _search.UpdateScoreAsync(vote.Picture_Id, pic.Total_Rating, pic.Votes);
                 _caching.UpdatePictureAsync(pic);
                 return Ok(new
                 {

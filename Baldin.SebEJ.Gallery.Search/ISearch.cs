@@ -15,6 +15,7 @@ namespace Baldin.SebEJ.Gallery.Search
         Task<bool> InsertPhotosAsync(IEnumerable<ES_DN_Photo> photos);
         Task<bool> InsertPhotoAsync(ES_DN_Photo photo);
         Task<bool> UpdatePhotoAsync(ES_DN_Photo photo);
+        Task<bool> UpdateScoreAsync(int photoId, long totalRating, int votes);
         Task<IEnumerable<ES_DN_Photo>> SearchPhotosAsync(string query, int page = 1);
     }
 }

@@ -70,5 +70,23 @@ namespace Baldin.SebEJ.Gallery.Search
             }
             return new ES_DN_Photo[0];
         }
+
+        public async Task<bool> UpdateScoreAsync(int photoId, long totalRating, int votes)
+        {
+            //var update = new UpdateDescriptor<ES_DN_Photo, object>("photos", "photo", photoId);
+            //update.Doc(new { Data = new {  } });
+            IUpdateRequest<ES_DN_Photo, ES_DN_Photo> updateRequest = new UpdateRequest<ES_DN_Photo, ES_DN_Photo>("photos", "photo", photoId);
+            updateRequest.Doc = new ES_DN_Photo
+            {
+                Data = new ES_DN_Data
+                {
+                    TotalRating = totalRating,
+                    Votes = votes
+                },
+                PhotoId = photoId
+            };
+            var resp = await _client.UpdateAsync<ES_DN_Photo>(updateRequest);
+            return resp.IsValid;
+        }
     }
 }
