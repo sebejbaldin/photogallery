@@ -12,6 +12,7 @@ document.getElementById('searchBox').addEventListener('input', async (event) => 
             })
             .then(data => data);
         if (data) {
+            history.replaceState(null, query, `/Gallery/Search?query=${query}`);
             writeCards(data.photos);
         }
     }
