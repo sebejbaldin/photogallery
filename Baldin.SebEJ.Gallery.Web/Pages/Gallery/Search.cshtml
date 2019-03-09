@@ -8,11 +8,14 @@
 <h1>Search</h1>
 
 <form method="get">
-    <div class="form-group">
-        <label for="searchBox">Search</label>
-        <input type="text" class="form-control" name="query" id="searchBox" aria-describedby="search" placeholder="Search authors and photos">
+    <div class="row">
+        <div class="col-6 offset-2">
+            <input type="text" class="form-control" name="query" id="searchBox" aria-describedby="search" placeholder="Search authors and photos">
+        </div>
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 <hr />
@@ -77,4 +80,6 @@
 @section Scripts {
     <script src="~/js/utils.js"></script>
     <script src="~/js/vote.js"></script>
+    <script src="~/js/gallery.js"></script>
+    <script src="~/js/search.js"></script>
 }
