@@ -79,6 +79,10 @@
         }
     }
 </div>
+@if (Model.Photos != null)
+{
+    <paging pictures="Model.Photos" url="/Gallery/Search"></paging>
+}
 
 @section Scripts {
     <script src="~/js/utils.js"></script>
