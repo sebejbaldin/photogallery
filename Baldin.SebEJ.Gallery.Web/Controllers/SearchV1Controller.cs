@@ -30,11 +30,11 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         [HttpGet("{index}")]
         public async Task<IActionResult> PaginatedSearch(int index, string query)
         {
-            var result = await _search.SearchPhotosAsync(query, index);
+            var result = await _search.PaginatedSearchAsync(query, index);
             IEnumerable<User_Picture> tosend = null;
             IEnumerable<int> userPics = new int[0];
 
-            if (result != null && result.Count() > 0)
+            if (result != null && result.Photos.Count() > 0)
             {
                 if (User.Identity.IsAuthenticated)
                 {
@@ -46,7 +46,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                         _caching.InsertVotesAsync(picsVoted);
                         userPics = picsVoted.Select(x => x.Picture_Id);
                     }
-                    tosend = result.Select(item => new User_Picture
+                    tosend = result.Photos.Select(item => new User_Picture
                     {
                         Id = item.PhotoId,
                         Rating = item.Data.Rating,
@@ -59,7 +59,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                 }
                 else
                 {
-                    tosend = result.Select(item => new User_Picture
+                    tosend = result.Photos.Select(item => new User_Picture
                     {
                         Id = item.PhotoId,
                         Rating = item.Data.Rating,

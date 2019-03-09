@@ -27,17 +27,18 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             _caching = caching;
         }
 
-        public IEnumerable<User_Picture> Photos { get; set; }
+        public PaginatedList<User_Picture> Photos { get; set; }
 
-        public async Task OnGet(string query = null)
+        public async Task OnGet(int index = 1, string query = null)
         {
             IEnumerable<User_Picture> list = new User_Picture[0];
+            PaginatedPhotos result = null;
             if (query != null)
             {
-                var result = await _search.SearchPhotosAsync(query);
+                result = await _search.PaginatedSearchAsync(query);
                 IEnumerable<int> userPics = new int[0];
 
-                if (result != null && result.Count() > 0)
+                if (result != null && result.Photos.Count() > 0)
                 {
                     if (User.Identity.IsAuthenticated)
                     {
@@ -49,7 +50,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                             _caching.InsertVotesAsync(picsVoted);
                             userPics = picsVoted.Select(x => x.Picture_Id);
                         }
-                        list = result.Select(item => new User_Picture
+                        list = result.Photos.Select(item => new User_Picture
                         {
                             Id = item.PhotoId,
                             Rating = item.Data.Rating,
@@ -62,7 +63,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     }
                     else
                     {
-                        list = result.Select(item => new User_Picture
+                        list = result.Photos.Select(item => new User_Picture
                         {
                             Id = item.PhotoId,
                             Rating = item.Data.Rating,
@@ -75,7 +76,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     }
                 }
             }
-            Photos = list;
+            Photos = (result != null) ? new PaginatedList<User_Picture>(list, (int)result.TotalResults, index, 6) : null;
         }
     }
 }
