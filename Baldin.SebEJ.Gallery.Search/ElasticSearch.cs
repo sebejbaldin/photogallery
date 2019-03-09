@@ -46,7 +46,7 @@ namespace Baldin.SebEJ.Gallery.Search
             return resp.IsValid;
         }
 
-        public async Task<IEnumerable<ES_DN_Photo>> SearchPhotosAsync(string query, int page = 1)
+        public async Task<PaginatedPhotos> PaginatedSearchAsync(string query, int page = 1)
         {
             if (page < 1)
                 page = 1;
@@ -66,15 +66,17 @@ namespace Baldin.SebEJ.Gallery.Search
             );
             if (resp.IsValid)
             {
-                return resp.Documents.ToArray();
+                return new PaginatedPhotos
+                {
+                    Photos = resp.Documents,
+                    TotalResults = resp.Total
+                };
             }
-            return new ES_DN_Photo[0];
+            return null;
         }
 
         public async Task<bool> UpdateScoreAsync(int photoId, long totalRating, int votes)
         {
-            //var update = new UpdateDescriptor<ES_DN_Photo, object>("photos", "photo", photoId);
-            //update.Doc(new { Data = new {  } });
             IUpdateRequest<ES_DN_Photo, ES_DN_Photo> updateRequest = new UpdateRequest<ES_DN_Photo, ES_DN_Photo>("photos", "photo", photoId);
             updateRequest.Doc = new ES_DN_Photo
             {
@@ -87,6 +89,30 @@ namespace Baldin.SebEJ.Gallery.Search
             };
             var resp = await _client.UpdateAsync<ES_DN_Photo>(updateRequest);
             return resp.IsValid;
+        }
+
+        public async Task<IReadOnlyCollection<ES_DN_Photo>> SearchPhotosAsync(int qty, string query)
+        {
+            if (qty < 1)
+                qty = 1;
+            var resp = await _client.SearchAsync<ES_DN_Photo>(e => e
+                .Size(qty)
+                .Query(q => q
+                    .MultiMatch(mm => mm
+                        .Fields(f => f
+                            .Field(fs => fs.Data.Name)
+                            .Field(fs => fs.User.Email)
+                            .Field(fs => fs.User.UserName)
+                        )
+                        .Query(query)
+                    )
+                )
+            );
+            if (resp.IsValid)
+            {
+                return resp.Documents;
+            }
+            return null;
         }
     }
 }
