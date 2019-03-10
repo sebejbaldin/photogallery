@@ -71,10 +71,9 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                     });
                 }
             }
-            var picCount = await _dataAccess.GetPictureCountAsync();
             return Ok(new
             {
-                pageCount = (int)Math.Ceiling(picCount / 6D),
+                pageCount = (int)Math.Ceiling(result.TotalResults / 6D),
                 photos = tosend
             });
         }

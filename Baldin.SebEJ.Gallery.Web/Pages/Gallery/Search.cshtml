@@ -79,14 +79,19 @@
         }
     }
 </div>
-@if (Model.Photos != null)
-{
-    <paging pictures="Model.Photos" url="/Gallery/Search"></paging>
+@{ 
+    var queryStrings = new Dictionary<string, string>
+    {
+        {"query", Model.CurrentQuery ?? ""}
+    };
 }
+    
+<paging pictures="Model.Photos" url="/Gallery/Search" query-strings="queryStrings"></paging>
+
 
 @section Scripts {
     <script src="~/js/utils.js"></script>
+    <script src="~/js/htmlWriters.js"></script>
     <script src="~/js/vote.js"></script>
-    <script src="~/js/gallery.js"></script>
     <script src="~/js/search.js"></script>
 }

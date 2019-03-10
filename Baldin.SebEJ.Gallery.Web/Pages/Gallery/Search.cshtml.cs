@@ -28,9 +28,11 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
         }
 
         public PaginatedList<User_Picture> Photos { get; set; }
+        public string CurrentQuery { get; set; }
 
         public async Task OnGet(int index = 1, string query = null)
         {
+            CurrentQuery = query;
             IEnumerable<User_Picture> list = new User_Picture[0];
             PaginatedPhotos result = null;
             if (query != null)
@@ -76,7 +78,9 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     }
                 }
             }
-            Photos = (result != null) ? new PaginatedList<User_Picture>(list, (int)result.TotalResults, index, 6) : null;
+            Photos = (result != null) ? 
+                new PaginatedList<User_Picture>(list, (int)result.TotalResults, index, 6) : 
+                new PaginatedList<User_Picture>(new User_Picture[0], 0, 1, 6);
         }
     }
 }
