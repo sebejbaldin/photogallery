@@ -15,7 +15,7 @@ async function navigateToPage(index) {
         let data = await getPaginatedPhotos(index, currentSearch);
         writePagination(data.pageIndex, data.pageCount);
         writeCards(data.photos);
-        history.pushState(`${currentPage}-${currentSearch}`, 'Search ' + index, `/Gallery/Search/${index}?query=${currentSearch}`);
+        history.pushState(`${index}-${currentSearch}`, 'Search ' + index, `/Gallery/Search/${index}?query=${currentSearch}`);
         currentPage = index;
     }
 }
