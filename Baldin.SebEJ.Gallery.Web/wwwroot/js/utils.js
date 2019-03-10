@@ -48,11 +48,15 @@ function decimalAdjust(type, value, exp) {
 
 function getCurrentPageIndex() {
     let currentUrl = location.pathname;
-    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/') + 1, currentUrl.indexOf('?'));
+    let endIndex = (currentUrl.includes('?')) ? currentUrl.indexOf('?') : currentUrl.length;
+    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/') + 1, endIndex);
     let id = null;
     try {
         id = parseInt(currentUrl);
     } catch (e) {
+        id = 1;
+    }
+    if (!id) {
         id = 1;
     }
     return id;
