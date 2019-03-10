@@ -45,3 +45,15 @@ function decimalAdjust(type, value, exp) {
     value = value.toString().split('e');
     return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
+
+function getCurrentPageIndex() {
+    let currentUrl = location.pathname;
+    currentUrl = currentUrl.substring(currentUrl.lastIndexOf('/') + 1, currentUrl.indexOf('?'));
+    let id = null;
+    try {
+        id = parseInt(currentUrl);
+    } catch (e) {
+        id = 1;
+    }
+    return id;
+}

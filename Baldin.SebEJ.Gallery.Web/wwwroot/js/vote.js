@@ -27,35 +27,3 @@
             console.log(err);
         });
 }
-
-function hasVoted(hasVoted, id, average, votes) {
-    if (!hasVoted) {
-        return `<form>
-            <div class="row">
-            <div class="col">
-                  <select name="vote" id="vote_${id}" class="form-control">
-                        <option value="1">1</option> 
-                        <option value="2">2</option> 
-                        <option value="3">3</option> 
-                        <option value="4">4</option> 
-                        <option value="5">5</option> 
-                  </select>
-                  </div>
-
-                  <div class="col">
-
-                  <button type="button" onclick="voteImage(${id});" class="btn btn-primary btn-block">Vote</button>
-                  </div>
-                  </div>
-                  </form>`;
-    } else {
-        return `<div class="row">
-                  <div class="col-6">
-                        <i class="fas fa-star"></i> ${average}
-                  </div>
-                  <div class="col-6">
-                        <i class="fas fa-poll"></i> ${votes}
-                  </div>
-            </div>`;
-    }
-}
