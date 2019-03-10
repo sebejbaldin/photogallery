@@ -65,7 +65,7 @@ function getPagination(current, hasPrev, hasNext, innerPages) {
             </li>`;
 
     innerPages.forEach(index => {
-        pagTemp += `<li class="page-item ${index === current ? "active" : ""}"><button class="page-link" onclick="navigateToPage(${index});">${index}</button></li>`;
+        pagTemp += `<li class="page-item ${index == current ? "active" : ""}"><button class="page-link" onclick="navigateToPage(${index});">${index}</button></li>`;
     });
 
 
