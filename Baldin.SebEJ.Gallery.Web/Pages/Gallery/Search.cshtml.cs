@@ -37,7 +37,7 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
             PaginatedPhotos result = null;
             if (query != null)
             {
-                result = await _search.PaginatedSearchAsync(query);
+                result = await _search.PaginatedSearchAsync(query, index);
                 IEnumerable<int> userPics = new int[0];
 
                 if (result != null && result.Photos.Count() > 0)
