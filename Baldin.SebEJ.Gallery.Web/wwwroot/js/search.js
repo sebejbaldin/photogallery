@@ -1,4 +1,4 @@
-﻿var currentSearch = null;
+﻿var currentSearch = getCurrentQuery();
 var currentPage = 1;
 
 window.onpopstate = async (event) => {
@@ -18,6 +18,27 @@ async function navigateToPage(index) {
         history.pushState(`${index}-${currentSearch}`, 'Search ' + index, `/Gallery/Search/${index}?query=${currentSearch}`);
         currentPage = index;
     }
+}
+
+async function getCurrentPagePhotos() {
+    let id = getCurrentPageIndex();
+    let query = getCurrentQuery();
+    if (id && query) {
+        let data = await getPaginatedPhotos(id, query);
+        writeCards(data.photos);
+    }
+}
+
+function getCurrentQuery() {
+    let temp = null;
+    let currentUrl = location.pathname + location.search;
+    let indexQuery = currentUrl.indexOf('query=');
+    if (indexQuery >= 0) {
+        let endIndex = currentUrl.includes('&', indexQuery) ? currentUrl.indexOf('&', indexQuery) : currentUrl.length;
+
+        temp = currentUrl.substring(indexQuery + 6, endIndex);
+    }
+    return temp;
 }
 
 async function getPaginatedPhotos(index, query) {
