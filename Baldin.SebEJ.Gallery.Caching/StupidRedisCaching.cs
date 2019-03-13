@@ -30,11 +30,12 @@ namespace Baldin.SebEJ.Gallery.Caching
                 }, available: false),
                 KeepAlive = 180,
                 ConnectTimeout = 2000,
-                Password = redis["Password"],
                 ReconnectRetryPolicy = new ExponentialRetry(7500),
                 ConnectRetry = 2,
                 AbortOnConnectFail = false
             };
+            if (!string.IsNullOrEmpty(redis["Password"]))
+                confRedis.Password = redis["Password"];
             //string connString = $"{redis["Host"]},password={redis["Password"]}";
             _multiplexer = ConnectionMultiplexer.Connect(confRedis);
         }
@@ -61,7 +62,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             {
                 list.Add(JsonConvert.DeserializeObject<Picture>(item));
             }
-            return list;
+            return (list.Count > 0) ? list : null;
         }
 
         public async Task<IEnumerable<Picture>> GetPhotosByScoreAsync(int start, int end = -1)
@@ -69,13 +70,13 @@ namespace Baldin.SebEJ.Gallery.Caching
             if (!_multiplexer.IsConnected)
                 return null;
             var database = GetDatabase();
-            var res = await database.SortedSetRangeByRankAsync("photos", start, end);
+            var res = await database.SortedSetRangeByRankAsync("photos", start, end - 1);
             var list = new List<Picture>(res.Count());
             foreach (var item in res)
             {
                 list.Add(JsonConvert.DeserializeObject<Picture>(item));
             }
-            return list;
+            return (list.Count > 0) ? list : null;
         }
 
         public async Task<IEnumerable<Picture>> GetRankAsync(int topN = -1)
@@ -97,7 +98,7 @@ namespace Baldin.SebEJ.Gallery.Caching
             {
                 list.Add(JsonConvert.DeserializeObject<Picture>(item));
             }
-            return list;
+            return (list.Count > 0) ? list : null;
         }
 
         public async Task<IEnumerable<int>> GetVotesByUserIdAsync(string userId)
