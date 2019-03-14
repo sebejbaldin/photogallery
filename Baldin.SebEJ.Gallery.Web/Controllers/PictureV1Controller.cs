@@ -21,6 +21,14 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
         private ICaching _caching;
         private UserManager<IdentityUser> _userManager;
 
+        public PictureV1Controller(IDataAccess dataAccess, ISearch search, ICaching caching, UserManager<IdentityUser> userManager)
+        {
+            _dataAccess = dataAccess;
+            _search = search;
+            _caching = caching;
+            _userManager = userManager;
+        }
+
         [HttpPost]
         public async Task<IActionResult> ImageReady(string url)
         {
