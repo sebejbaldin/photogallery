@@ -155,6 +155,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL
                                ORDER BY [dbo].[Id]
                                OFFSET ((@PageNumber - 1) * @RowspPage) ROWS
                                FETCH NEXT @RowspPage ROWS ONLY";
@@ -171,6 +172,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL
                                ORDER BY [dbo].[Id]
                                OFFSET ((@PageNumber - 1) * @RowspPage) ROWS
                                FETCH NEXT @RowspPage ROWS ONLY";
@@ -227,7 +229,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new SqlConnection(ConnectionString))
             {
                 string sql = @"SELECT COUNT(*)
-                               FROM [dbo].[Pictures]";
+                               FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL";
                 return conn.ExecuteScalar<long>(sql);
             }
         }
@@ -237,7 +240,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new SqlConnection(ConnectionString))
             {
                 string sql = @"SELECT COUNT(*)
-                               FROM [dbo].[Pictures]";
+                               FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL";
                 return await conn.ExecuteScalarAsync<long>(sql);
             }
         }
@@ -247,7 +251,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new SqlConnection(ConnectionString))
             {
                 string sql = @"SELECT *
-                               FROM [dbo].[Pictures]";
+                               FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL";
                 return conn.Query<Picture>(sql);
             }
         }
@@ -257,7 +262,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new SqlConnection(ConnectionString))
             {
                 string sql = @"SELECT *
-                               FROM [dbo].[Pictures]";
+                               FROM [dbo].[Pictures]
+                               WHERE [Thumbnail_Url] IS NOT NULL";
                 return await conn.QueryAsync<Picture>(sql);
             }
         }
@@ -269,7 +275,8 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
                                WHERE Id
-                               BETWEEN @startId AND @endId";
+                               BETWEEN @startId AND @endId
+                               AND [Thumbnail_Url] IS NOT NULL";
                 return conn.Query<Picture>(sql, new { startId, endId });
             }
         }
@@ -281,7 +288,8 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
                                WHERE Id
-                               BETWEEN @startId AND @endId";
+                               BETWEEN @startId AND @endId
+                               AND [Thumbnail_Url] IS NOT NULL";
                 return await conn.QueryAsync<Picture>(sql, new { startId, endId });
             }
         }
@@ -293,6 +301,7 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT TOP @top *
                                 FROM [dbo].[Pictures]
                                 WHERE Votes != 0
+                                AND [Thumbnail_Url] IS NOT NULL
                                 ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
                 return conn.Query<Picture>(sql, new { top = topN });
             }
@@ -305,6 +314,7 @@ namespace Baldin.SebEJ.Gallery.Data
                 string sql = @"SELECT TOP @top *
                                 FROM [dbo].[Pictures]
                                 WHERE Votes != 0
+                                AND [Thumbnail_Url] IS NOT NULL
                                 ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
                 return await conn.QueryAsync<Picture>(sql, new { top = topN });
             }

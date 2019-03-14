@@ -194,6 +194,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL
                                ORDER BY id
                                LIMIT @lim OFFSET @offs";
                 return conn.Query<Picture>(sql, new { lim = pageCount, offs = (index - 1) * pageCount });
@@ -216,6 +217,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL
                                ORDER BY id
                                LIMIT @lim OFFSET @offs";
                 return await conn.QueryAsync<Picture>(sql, new { lim = pageCount, offs = (index - 1) * pageCount });
@@ -299,7 +301,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT count(*)
-                               FROM sebej_pictures";
+                               FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL";
                 return conn.ExecuteScalar<long>(sql);
             }
         }
@@ -309,7 +312,8 @@ namespace Baldin.SebEJ.Gallery.Data
             using (var conn = new NpgsqlConnection(ConnectionString))
             {
                 string sql = @"SELECT count(*)
-                               FROM sebej_pictures";
+                               FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL";
                 return await conn.ExecuteScalarAsync<long>(sql);
             }
         }
@@ -326,7 +330,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,url AS Url
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
-                               FROM sebej_pictures";
+                               FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL";
                 return conn.Query<Picture>(sql);
             }
         }
@@ -343,7 +348,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,url AS Url
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
-                               FROM sebej_pictures";
+                               FROM sebej_pictures
+                               WHERE thumbnail_url IS NOT NULL";
                 return await conn.QueryAsync<Picture>(sql);
             }
         }
@@ -362,7 +368,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
                                WHERE id
-                               BETWEEN @startId AND @endId";
+                               BETWEEN @startId AND @endId
+                               AND thumbnail_url IS NOT NULL";
                 return conn.Query<Picture>(sql, new { startId, endId });
             }
         }
@@ -381,7 +388,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
                                WHERE id 
-                               BETWEEN @startId AND @endId";
+                               BETWEEN @startId AND @endId
+                               AND thumbnail_url IS NOT NULL";
                 return await conn.QueryAsync<Picture>(sql, new { startId, endId });
             }
         }
@@ -400,6 +408,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
                                WHERE votes != 0
+                               AND thumbnail_url IS NOT NULL
                                ORDER BY total_rating::decimal / votes * 100 + votes DESC
                                LIMIT @top";
                 return conn.Query<Picture>(sql, new { top = topN });
@@ -420,6 +429,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
                                WHERE votes != 0
+                               AND thumbnail_url IS NOT NULL
                                ORDER BY total_rating::decimal / votes * 100 + votes DESC
                                LIMIT @top";
                 return await conn.QueryAsync<Picture>(sql, new { top = topN });
@@ -670,6 +680,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                SET name = @Name
                                   ,original_name = @OriginalName
                                   ,url = @Url
+                                  ,thumbnail_url = @Thumbnail_Url
                                   ,votes = @Votes
                                   ,total_rating = @Total_Rating
                                WHERE id = @Id";
@@ -685,6 +696,7 @@ namespace Baldin.SebEJ.Gallery.Data
                                SET name = @Name
                                   ,original_name = @OriginalName
                                   ,url = @Url
+                                  ,thumbnail_url = @Thumbnail_Url
                                   ,votes = @Votes
                                   ,total_rating = @Total_Rating
                                WHERE id = @Id";
