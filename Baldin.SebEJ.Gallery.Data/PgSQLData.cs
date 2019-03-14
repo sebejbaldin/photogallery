@@ -273,7 +273,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
-                               WHERE url = @Url";
+                               WHERE url = @Url 
+                               OR thumbnail_url = @Url";
                 return conn.QueryFirstOrDefault<Picture>(sql, new { Url = url });
             }
         }
@@ -291,7 +292,8 @@ namespace Baldin.SebEJ.Gallery.Data
                                ,votes AS Votes
                                ,total_rating AS Total_Rating
                                FROM sebej_pictures
-                               WHERE url = @Url";
+                               WHERE url = @Url
+                               OR thumbnail_url = @Url";
                 return await conn.QueryFirstOrDefaultAsync<Picture>(sql, new { Url = url });
             }
         }

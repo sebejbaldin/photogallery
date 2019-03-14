@@ -208,7 +208,8 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
-                               WHERE [Url] = @Url";
+                               WHERE [Url] = @Url
+                               OR [Thumbnail_Url] = @Url";
                 return conn.QueryFirstOrDefault<Picture>(sql, new { Url = url });
             }
         }
@@ -219,7 +220,8 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
-                               WHERE [Url] = @Url";
+                               WHERE [Url] = @Url
+                               OR [Thumbnail_Url] = @Url";
                 return await conn.QueryFirstOrDefaultAsync<Picture>(sql, new { Url = url });
             }
         }
