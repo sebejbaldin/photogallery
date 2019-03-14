@@ -117,9 +117,9 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                     User_Id = userId.Value
                 };
                 pic.Id = await _dataAccess.InsertPictureAsync(pic);
-                pic.Thumbnail_Url = "";
+                //pic.Thumbnail_Url = "";
                 await _imageManager.SaveAsync(Photo.OpenReadStream(), name);
-                await _caching.InsertPhotoAsync(pic);
+                //await _caching.InsertPhotoAsync(pic);
             }
             return RedirectToPage("/Gallery/Index");
         }
