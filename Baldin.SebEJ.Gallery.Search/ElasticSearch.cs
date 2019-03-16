@@ -114,5 +114,17 @@ namespace Baldin.SebEJ.Gallery.Search
             }
             return null;
         }
+
+        public async Task<bool> DeletePhotoAsync(int Id)
+        {
+            DocumentPath<ES_DN_Photo> document = new DocumentPath<ES_DN_Photo>(new ES_DN_Photo
+            {
+                PhotoId = Id
+            });
+
+            var resp = await _client.DeleteAsync(document);
+
+            return resp.IsValid;
+        }
     }
 }
