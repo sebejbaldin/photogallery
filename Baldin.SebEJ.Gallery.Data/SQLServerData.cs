@@ -62,7 +62,7 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
-        public bool DeleteVote(int Id)
+        public bool DeleteVotesByPictureId(int Id)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -72,7 +72,7 @@ namespace Baldin.SebEJ.Gallery.Data
             }
         }
 
-        public async Task<bool> DeleteVoteAsync(int Id)
+        public async Task<bool> DeleteVotesByPictureIdAsync(int Id)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {

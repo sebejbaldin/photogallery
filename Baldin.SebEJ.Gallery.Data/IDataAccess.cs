@@ -25,7 +25,7 @@ namespace Baldin.SebEJ.Gallery.Data
         IEnumerable<Vote> GetVotesByUserId(string userId);
         bool InsertVote(Vote vote);
         bool UpdateVote(Vote vote);
-        bool DeleteVote(int Id);
+        bool DeleteVotesByPictureId(int Id);
 
         Comment GetComment(int Id);
         IEnumerable<Comment> GetComments();
@@ -48,7 +48,7 @@ namespace Baldin.SebEJ.Gallery.Data
         Task<IEnumerable<Vote>> GetVotesByUserIdAsync(string userId);
         Task<bool> InsertVoteAsync(Vote vote);
         Task<bool> UpdateVoteAsync(Vote vote);
-        Task<bool> DeleteVoteAsync(int Id);
+        Task<bool> DeleteVotesByPictureIdAsync(int Id);
 
         Task<Comment> GetCommentAsync(int Id);
         Task<IEnumerable<Comment>> GetCommentsAsync();
