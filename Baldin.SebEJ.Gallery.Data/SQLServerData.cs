@@ -130,7 +130,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Comments]
-                               WHERE Picture_Id = @photoId";
+                               WHERE [Picture_Id] = @photoId";
                 return conn.Query<Comment>(sql, new { photoId });
             }
         }
@@ -141,7 +141,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Comments]
-                               WHERE Picture_Id = @photoId";
+                               WHERE [Picture_Id] = @photoId";
                 return await conn.QueryAsync<Comment>(sql, new { photoId });
             }
         }
@@ -276,7 +276,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
-                               WHERE Id
+                               WHERE [Id]
                                BETWEEN @startId AND @endId
                                AND [Thumbnail_Url] IS NOT NULL";
                 return conn.Query<Picture>(sql, new { startId, endId });
@@ -289,7 +289,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT *
                                FROM [dbo].[Pictures]
-                               WHERE Id
+                               WHERE [Id]
                                BETWEEN @startId AND @endId
                                AND [Thumbnail_Url] IS NOT NULL";
                 return await conn.QueryAsync<Picture>(sql, new { startId, endId });
@@ -302,7 +302,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT TOP @top *
                                 FROM [dbo].[Pictures]
-                                WHERE Votes != 0
+                                WHERE [Votes] != 0
                                 AND [Thumbnail_Url] IS NOT NULL
                                 ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
                 return conn.Query<Picture>(sql, new { top = topN });
@@ -315,7 +315,7 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"SELECT TOP @top *
                                 FROM [dbo].[Pictures]
-                                WHERE Votes != 0
+                                WHERE [Votes] != 0
                                 AND [Thumbnail_Url] IS NOT NULL
                                 ORDER BY CAST(Total_Rating AS decimal) / Votes * 100 + Votes DESC";
                 return await conn.QueryAsync<Picture>(sql, new { top = topN });
@@ -424,16 +424,22 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"INSERT INTO [dbo].[Pictures]
                                     ([Name]
+                                    ,[OriginalName]
+                                    ,[User_Id]
+                                    ,[Thumbnail_Url]
                                     ,[Url]
                                     ,[Votes]
                                     ,[Total_Rating])
                                VALUES
                                     (@Name
+                                    ,@OriginalName
+                                    ,@User_Id
+                                    ,@Thumbnail_Url
                                     ,@Url
                                     ,@Votes
                                     ,@Total_Rating)";
                 conn.Execute(sql, picture);
-                sql = @"SELECT Id FROM [dbo].[Pictures] WHERE Url = @Url";
+                sql = @"SELECT [Id] FROM [dbo].[Pictures] WHERE [Url] = @Url";
                 return conn.ExecuteScalar<int>(sql, new { picture.Url });
             }
         }
@@ -444,16 +450,22 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"INSERT INTO [dbo].[Pictures]
                                     ([Name]
+                                    ,[OriginalName]
+                                    ,[User_Id]
+                                    ,[Thumbnail_Url]
                                     ,[Url]
                                     ,[Votes]
                                     ,[Total_Rating])
                                VALUES
                                     (@Name
+                                    ,@OriginalName
+                                    ,@User_Id
+                                    ,@Thumbnail_Url
                                     ,@Url
                                     ,@Votes
                                     ,@Total_Rating)";
                 await conn.ExecuteAsync(sql, picture);
-                sql = @"SELECT Id FROM [dbo].[Pictures] WHERE Url = @Url";
+                sql = @"SELECT [Id] FROM [dbo].[Pictures] WHERE [Url] = @Url";
                 return await conn.ExecuteScalarAsync<int>(sql, new { picture.Url });
             }
         }
@@ -544,6 +556,8 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"UPDATE [dbo].[Pictures]
                                SET [Name] = @Name
+                                  ,[Thumbnail_Url] = @Thumbnail_Url
+                                  ,[OriginalName] = @OriginalName
                                   ,[Url] = @Url
                                   ,[Votes] = @Votes
                                   ,[Total_Rating] = @Total_Rating
@@ -558,6 +572,8 @@ namespace Baldin.SebEJ.Gallery.Data
             {
                 string sql = @"UPDATE [dbo].[Pictures]
                                SET [Name] = @Name
+                                  ,[Thumbnail_Url] = @Thumbnail_Url
+                                  ,[OriginalName] = @OriginalName
                                   ,[Url] = @Url
                                   ,[Votes] = @Votes
                                   ,[Total_Rating] = @Total_Rating
