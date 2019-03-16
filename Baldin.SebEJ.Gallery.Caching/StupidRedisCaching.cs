@@ -40,6 +40,15 @@ namespace Baldin.SebEJ.Gallery.Caching
             _multiplexer = ConnectionMultiplexer.Connect(confRedis);
         }
 
+        public async Task<bool> DeletePictureAsync(int Id)
+        {
+            if (!_multiplexer.IsConnected)
+                return false;
+            var database = GetDatabase();
+            var res = await database.SortedSetRemoveRangeByScoreAsync("photos", Id, Id);
+            return res > 0;
+        }
+
         public async Task<Picture> GetPhotoAsync(int Id)
         {
             if (!_multiplexer.IsConnected)

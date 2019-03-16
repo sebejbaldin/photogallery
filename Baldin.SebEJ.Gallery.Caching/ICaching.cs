@@ -14,6 +14,7 @@ namespace Baldin.SebEJ.Gallery.Caching
         Task<bool> InsertPhotoAsync(Picture picture);
         Task<bool> InsertPhotosAsync(IEnumerable<Picture> pictures);
         Task<bool> UpdatePictureAsync(Picture picture);
+        Task<bool> DeletePictureAsync(int Id);
 
         //Task<IEnumerable<Vote>> GetVotesAsync();
         Task<IEnumerable<int>> GetVotesByUserIdAsync(string userId);

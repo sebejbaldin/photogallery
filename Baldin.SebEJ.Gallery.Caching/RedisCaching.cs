@@ -237,5 +237,10 @@ namespace Baldin.SebEJ.Gallery.Caching
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> DeletePictureAsync(int Id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
