@@ -88,7 +88,7 @@ namespace Baldin.SebEJ.Gallery.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISearch search, IDataAccess dataAccess, UserManager<IdentityUser> userManager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISearch search, IDataAccess dataAccess, ICaching caching, UserManager<IdentityUser> userManager)
         {
             app.UseForwardedHeaders();
             if (env.IsDevelopment())
@@ -102,8 +102,8 @@ namespace Baldin.SebEJ.Gallery.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            var data = dataAccess.GetPictures().GroupBy(x => x.User_Id);
+            var pictures = dataAccess.GetPictures();
+            var data = pictures.GroupBy(x => x.User_Id);
             var esData = new List<ES_DN_Photo>();
             foreach (var group in data)
             {
@@ -129,6 +129,7 @@ namespace Baldin.SebEJ.Gallery.Web
             }
 
             search.InsertPhotosAsync(esData);
+            caching.InsertPhotosAsync(pictures);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
