@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Data.Models;
+using Baldin.SebEJ.Gallery.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -70,11 +71,6 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
 
             await _dataAccess.UpdateCommentAsync(comment);
             return NoContent();
-        }
-
-        public class ThisShouldNotExist
-        {
-            public string TextBody { get; set; }
         }
     }
 }
