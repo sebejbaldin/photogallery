@@ -6,6 +6,7 @@ using Baldin.SebEJ.Gallery.Caching;
 using Baldin.SebEJ.Gallery.Data;
 using Baldin.SebEJ.Gallery.Search;
 using Baldin.SebEJ.Gallery.Search.Models;
+using Baldin.SebEJ.Gallery.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,14 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ImageReady(string url)
+        [HttpPost(Name = "ImageReady")]
+        public async Task<IActionResult> ImageReady(ThisShouldNotExist textBody)
         {
+            if (textBody == null || textBody.TextBody == null)
+            {
+                return BadRequest("No url provided");
+            }
+            var url = textBody.TextBody;
             var pic = await _dataAccess.GetPictureByUrlAsync(url);
             if (pic != null)
             {
