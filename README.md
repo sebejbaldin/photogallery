@@ -30,7 +30,7 @@ The process actually is:
   * By username
   * By user email
   * By photo name 
-* View a rank of the better photos
+* View a rank of the best photos
 * Delete the photo you have uploaded
 * Client-side and server-side pagination
 
