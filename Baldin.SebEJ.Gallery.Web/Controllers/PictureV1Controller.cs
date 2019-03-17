@@ -41,6 +41,8 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
             var pic = await _dataAccess.GetPictureByUrlAsync(url);
             if (pic != null)
             {
+                string filename = pic.OriginalName ?? pic.Name;
+                filename = filename.Replace('_', '-').Replace('.', '-');
                 var user = await _userManager.FindByIdAsync(pic.User_Id);
                 bool result = await _caching.InsertPhotoAsync(pic);
                 ES_DN_Photo photo = new ES_DN_Photo
@@ -54,7 +56,7 @@ namespace Baldin.SebEJ.Gallery.Web.Controllers
                     },
                     Data = new ES_DN_Data
                     {
-                        Name = pic.OriginalName ?? pic.Name,
+                        Name = filename,
                         Thumbnail_Url = pic.Thumbnail_Url,
                         TotalRating = pic.Total_Rating,
                         Url = pic.Url,
