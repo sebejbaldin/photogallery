@@ -106,12 +106,14 @@ namespace Baldin.SebEJ.Gallery.Web.Pages.Gallery
                 return Unauthorized();
             if (Photo != null && Photo.Length > 0)
             {
-                var fileExtension = Photo.FileName.Substring(Photo.FileName.LastIndexOf('.'));
+                var extensionIndex = Photo.FileName.LastIndexOf('.');
+                var fileExtension = Photo.FileName.Substring(extensionIndex);
                 var name = Guid.NewGuid().ToString() + fileExtension;
+                string filename = Photo.FileName.Substring(0, Photo.FileName.Length - (Photo.FileName.Length - extensionIndex));
                 var userId = User.FindFirst("userId");
                 var pic = new Picture
                 {
-                    OriginalName = Photo.FileName,
+                    OriginalName = filename,
                     Url = $"{_configuration["PhotoUrl"]}/{name}",
                     Name = name,
                     User_Id = userId.Value
